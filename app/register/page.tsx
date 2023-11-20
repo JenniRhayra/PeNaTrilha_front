@@ -41,7 +41,7 @@ const TypeProfile = [
       value: 'guia',
       label: 'Guia',
     },
-  ];
+];
 
 export default function Register(){
     const [showPassword, setShowPassword] = React.useState(false);
@@ -51,8 +51,16 @@ export default function Register(){
     };
         
     return (
-        <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#F8F8F8] container mx-auto px-12 py-4">
-            <div className='col-span-12 lg:col-span-5 grid place-items-center'>
+        <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
+            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0 z-100'>
+                <Image
+                    src="/images/img_abs_01.png"
+                    alt="forma abstrata"
+                    width={300}
+                    height={300}
+                />
+            </div>
+            <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
                     alt="logo pe na trilha"
@@ -135,8 +143,8 @@ export default function Register(){
                             />
                         </FormControl>
                     </div>
-                    <div>
-                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained">CADASTRAR</ColorButton>
+                    <div className='my-10'>
+                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained" href="#">CADASTRAR</ColorButton>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">Já tem uma conta?</p>
