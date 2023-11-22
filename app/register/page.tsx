@@ -12,6 +12,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
+import { useState } from "react";
+import { useForm } from 'react-hook-form';
 import Link from "next/link";
 import Image from 'next/image';
 
@@ -49,6 +51,35 @@ export default function Register(){
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+
+    const {register, handleSubmit} = useForm();
+    const [emailError, setEmailError] = useState("");
+    const [passwordError, setPasswordError] = useState("");
+
+    const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i
+
+    const passwordPattern = /^(?=.*\d)[0-9a-zA-Z$*&@#]{6,}$/
+
+    const handleFormSubmit = (formData : any) => {
+        console.log('form data is ',formData);
+        if(!formData.input_email || !formData.input_email.length){
+            setEmailError("Informe um email")
+            return false;
+        }
+        else if(!emailPattern.test(formData.input_email)){
+            setEmailError("Informe um email válido")
+            return false;
+        } else {
+            setEmailError("");
+        }
+        if(!formData.input_password || !formData.input_password.length){
+            setPasswordError("Informe uma senha")
+            return false;
+        } else {
+            setPasswordError("");
+        }
+        return true;
+    }
         
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
@@ -74,27 +105,34 @@ export default function Register(){
             <div className="text-center">
                 <Box 
                     component="form" 
+                    onSubmit={handleSubmit(handleFormSubmit)}
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div>
                         <TextField
+                            error={emailError && emailError.length ? true : false}
                             label="Email"
                             id="input_email"
                             sx={{ m: 1, width: '35ch' }}
                             variant="standard"
+                            required
+                            autoFocus
+                            helperText={emailError}
+                            {...register('input_email')}
                         />
                     </div>
                     <div>
                         <TextField 
                             sx={{ m: 1, width: '35ch' }}
-                            id="select_perfil"
+                            id="select_profile"
                             select
                             label="Perfil"
                             defaultValue="visitante"
                             SelectProps={{
                                 native: true,
                             }}
-                            //helperText="Informe seu perfil"
                             variant="standard"
+                            required
+                            {...register('select_profile')}
                             >
                             {TypeProfile.map((option) => (
                                 <option key={option.value} value={option.value}>
@@ -104,27 +142,29 @@ export default function Register(){
                         </TextField>
                     </div>
                     <div>
-                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
+                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required >
                             <InputLabel htmlFor="password" >Senha</InputLabel>
                             <Input
-                                id="input_password"
-                                type={showPassword ? 'text' : 'password'}
+                                error={passwordError && passwordError.length ? true : false}
+                                id="input_password"                                
+                                type={showPassword ? 'text' : 'password'}  
+                                {...register('input_password')}                          
                                 endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
                                 }
                             />
                         </FormControl>
                     </div>
                     <div>
-                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
+                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
                             <InputLabel htmlFor="confirm_password">Confirme a senha</InputLabel>
                             <Input
                                 id="input_confirm_password"
@@ -144,7 +184,7 @@ export default function Register(){
                         </FormControl>
                     </div>
                     <div className='my-10'>
-                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained" href="#">CADASTRAR</ColorButton>
+                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</ColorButton>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">Já tem uma conta?</p>

@@ -142,6 +142,7 @@ export default function Create_Account(){
                             id="input-name"
                             sx={{ m: 1, width: '45ch' }}
                             variant="standard"
+                            required
                         />
                     </div>
                     <div>
@@ -163,7 +164,7 @@ export default function Create_Account(){
                         </FormControl>
                     </div>
                     <div className='flex flex-col items-center justify-center'>
-                        <FormControl>
+                        <FormControl required>
                             <FormLabel id="row-radio-buttons">Sexo</FormLabel>
                             <RadioGroup
                                 row
@@ -206,6 +207,7 @@ export default function Create_Account(){
                                     variant="standard"
                                     label="Parques"
                                     placeholder="Selecionar parque"
+                                    required
                                 />
                             )}
                         />
@@ -236,8 +238,8 @@ export default function Create_Account(){
                             placeholder="Conte um pouco sobre você, o que vocês faz, cursos e atividades que fez..."
                         />
                     </div>
-                    <div className='flex flex-col items-center justify-left'>
-                        <p className='m-1 w-[45ch]'>
+                    <div className='flex flex-col items-center justify-start'>
+                        <p className='m-1 w-[45ch] text-[#C1C1C1] text-left'>
                             IMPORTANTE: seu perfil como guia só será disponibilizado depois que o(s) parque(s) informado(s) reconhecer(em) seu perfil como guia.
                         </p>
                     </div>
