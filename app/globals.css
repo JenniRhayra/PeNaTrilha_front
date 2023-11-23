@@ -5,3 +5,9 @@
 #btn_login {
     background-color: #212816;
 }
+
+button,
+[type='button'] {
+    background-color: '#000000'
+}
+
