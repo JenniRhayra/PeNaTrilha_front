@@ -12,6 +12,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
+import FormHelperText from '@mui/material/FormHelperText';
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import Link from "next/link";
@@ -55,9 +56,9 @@ export default function Register(){
     const {register, handleSubmit} = useForm();
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [confirmpasswordError, setConfirmPasswordError] = useState("");
 
-    const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i
-
+    const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i
     const passwordPattern = /^(?=.*\d)[0-9a-zA-Z$*&@#]{6,}$/
 
     const handleFormSubmit = (formData : any) => {
@@ -66,19 +67,36 @@ export default function Register(){
             setEmailError("Informe um email")
             return false;
         }
-        else if(!emailPattern.test(formData.input_email)){
-            setEmailError("Informe um email válido")
-            return false;
-        } else {
-            setEmailError("");
-        }
+            else if(!emailPattern.test(formData.input_email)){
+                setEmailError("Informe um email válido")
+                return false;
+            } else {
+                setEmailError("");
+            }
+
         if(!formData.input_password || !formData.input_password.length){
             setPasswordError("Informe uma senha")
             return false;
-        } else {
-            setPasswordError("");
         }
-        return true;
+            else if(!passwordPattern.test(formData.input_password)){
+                setPasswordError("A senha precisa de pelo menos 6 caracteres")
+                return false;
+            } else {
+                setPasswordError("");
+            }
+        
+        if(!formData.input_confirm_password || !formData.input_confirm_password.length){
+            setConfirmPasswordError("Confirme a senha")
+            return false;
+        }
+            else if(formData.input_password != formData.input_confirm_password){
+                setConfirmPasswordError("As senhas precisam ser iguais")
+                return false;
+            } else {
+                setConfirmPasswordError("");
+            }
+        
+        return true;        
     }
         
     return (
@@ -161,14 +179,17 @@ export default function Register(){
                                     </InputAdornment>
                                 }
                             />
+                            <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
                         </FormControl>
                     </div>
                     <div>
                         <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
                             <InputLabel htmlFor="confirm_password">Confirme a senha</InputLabel>
                             <Input
+                                error={confirmpasswordError && confirmpasswordError.length ? true : false}
                                 id="input_confirm_password"
                                 type={showPassword ? 'text' : 'password'}
+                                {...register('input_confirm_password')} 
                                 endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -181,6 +202,7 @@ export default function Register(){
                                 </InputAdornment>
                                 }
                             />
+                            <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
                         </FormControl>
                     </div>
                     <div className='my-10'>

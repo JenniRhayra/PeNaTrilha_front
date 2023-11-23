@@ -3,12 +3,8 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import IconButton from '@mui/material/IconButton';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
@@ -17,7 +13,8 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { IMaskInput } from 'react-imask';
-import Chip from '@mui/material/Chip';
+import { useForm } from 'react-hook-form';
+import { useState } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
 import Link from "next/link";
 import Image from 'next/image';
@@ -109,7 +106,29 @@ const DateMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
 
 
 export default function Create_Account(){
-    
+    const {register, handleSubmit} = useForm();
+    const [nameError, setnameError] = useState("");
+    const [parkError, setParkError] = useState("");
+
+    const handleFormSubmit = (formData : any) => {
+        console.log('form data is ',formData);
+        if(!formData.input_name || !formData.input_name.length){
+            setnameError("Informe um nome")
+            return false;
+        } else {
+            setnameError("");
+        }
+
+        if(!formData.select_park || !formData.select_park.length){
+            setParkError("Informe um parque")
+            return false;
+        } else {
+            setParkError("");
+        }
+        
+        return true;        
+    }
+
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
             <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0 z-100'>
@@ -135,30 +154,37 @@ export default function Create_Account(){
             <div className="text-center">
                 <Box 
                     component="form" 
+                    onSubmit={handleSubmit(handleFormSubmit)}
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div>
                         <TextField
                             label="Nome completo"
-                            id="input-name"
+                            id="input_name"
                             sx={{ m: 1, width: '45ch' }}
                             variant="standard"
                             required
+                            autoFocus
+                            error={nameError && nameError.length ? true : false}
+                            helperText={nameError}
+                            {...register('input_name')}
                         />
                     </div>
                     <div>
                         <TextField
                             label="Gostaria de ser chamado(a) de..."
-                            id="input-slugname"
+                            id="input_slugname"
                             sx={{ m: 1, width: '45ch' }}
                             variant="standard"
+                            {...register('input_slugname')}
                         />
                     </div>
                     <div>
                         <FormControl sx={{ m: 1, width: '45ch' }} variant="standard">
                             <InputLabel htmlFor="formatted-phone-mask-input">Telefone</InputLabel>
                             <Input
-                                name="phonemask"
+                                //name="phonemask"
                                 id="formatted-phone-mask-input"
+                                {...register('formatted-phone-mask-input')}
                                 inputComponent={PhoneMaskCustom as any}
                             />
                         </FormControl>
@@ -169,7 +195,9 @@ export default function Create_Account(){
                             <RadioGroup
                                 row
                                 aria-labelledby="buttons"
-                                name="row-radio-buttons-group"
+                                //name="row-radio-buttons-group"
+                                defaultValue="female"
+                                {...register('row-radio-buttons')}
                             >
                                 <FormControlLabel value="female" control={<Radio />} label="feminino" />
                                 <FormControlLabel value="male" control={<Radio />} label="masculino" />
@@ -181,8 +209,9 @@ export default function Create_Account(){
                         <FormControl sx={{ m: 1, width: '45ch' }} variant="standard">
                             <InputLabel htmlFor="formatted-date-mask-input">Data de Nascimento</InputLabel>
                             <Input
-                                name="datemask"
+                                //name="datemask"
                                 id="formatted-date-mask-input"
+                                {...register('formatted-date-mask-input')}
                                 inputComponent={DateMaskCustom as any}
                             />
                         </FormControl>
@@ -190,16 +219,17 @@ export default function Create_Account(){
                     <div>
                         <TextField
                             label="Especialidades: botânica, observação de aves..."
-                            id="input-espec"
+                            id="input_espec"
                             sx={{ m: 1, width: '45ch' }}
                             variant="standard"
+                            {...register('input_espec')}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-center'>
                         <Autocomplete
                             sx={{ m: 1, width: '45ch' }}
                             multiple
-                            id="select-park"
+                            id="select_park"
                             options={TypePark}
                             renderInput={(params) => (
                                 <TextField
@@ -208,6 +238,9 @@ export default function Create_Account(){
                                     label="Parques"
                                     placeholder="Selecionar parque"
                                     required
+                                    error={parkError && parkError.length ? true : false}
+                                    helperText={parkError}
+                                    {...register('select_park')}
                                 />
                             )}
                         />
@@ -216,7 +249,7 @@ export default function Create_Account(){
                         <Autocomplete
                             sx={{ m: 1, width: '45ch' }}
                             multiple
-                            id="select-language"
+                            id="select_language"
                             options={TypeLanguage}
                             renderInput={(params) => (
                                 <TextField
@@ -224,6 +257,7 @@ export default function Create_Account(){
                                     variant="standard"
                                     label="Idiomas"
                                     placeholder="Selecionar idioma"
+                                    {...register('select_language')}
                                 />
                             )}
                         />
@@ -231,11 +265,12 @@ export default function Create_Account(){
                     <div>
                         <TextField
                             sx={{ m: 1, width: '45ch' }}
-                            id="box-description"
+                            id="box_description"
                             label="Descrição"
                             multiline
                             rows={4}
                             placeholder="Conte um pouco sobre você, o que vocês faz, cursos e atividades que fez..."
+                            {...register('box_description')}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-start'>
@@ -244,7 +279,7 @@ export default function Create_Account(){
                         </p>
                     </div>
                     <div className='mt-10'>
-                        <ColorButton id='button' sx={{ m: 1, width: '50ch' }} variant="contained" href="#">CADASTRAR</ColorButton>
+                        <ColorButton id='button' sx={{ m: 1, width: '50ch' }} variant="contained" type='submit'>CADASTRAR</ColorButton>
                     </div>
                     <div>
                         <Link href="#">TERMINAR DEPOIS</Link>
