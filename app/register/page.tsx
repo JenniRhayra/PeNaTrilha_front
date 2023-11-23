@@ -12,8 +12,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import { styled } from '@mui/material/styles';
 import Button, { ButtonProps } from '@mui/material/Button';
-import Link from "next/link";
 import Image from 'next/image';
+import Link from '@mui/material/Link';
 
 
 const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
@@ -140,7 +140,8 @@ export default function Register(){
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">Já tem uma conta?</p>
-                        <Link href="#">FAZER LOGIN</Link>
+                        <Link href="../login" underline="hover">FAZER LOGIN</Link>
+
                     </div>
                 </Box>
             </div>
