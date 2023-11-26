@@ -23,37 +23,37 @@ const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
     color: theme.palette.getContrastText('#414D33'),
     backgroundColor: '#414D33',
     '&:hover': {
-      backgroundColor: '#7D9662',
+        backgroundColor: '#7D9662',
     },
 }));
 
 const TypeProfile = [
     {
-      value: 'admin',
-      label: 'Administrador',
+        value: 'admin',
+        label: 'Administrador',
     },
     {
-      value: 'entidade',
-      label: 'Entidade/Parque',
+        value: 'entidade',
+        label: 'Entidade/Parque',
     },
     {
-      value: 'visitante',
-      label: 'Visitante',
+        value: 'visitante',
+        label: 'Visitante',
     },
     {
-      value: 'guia',
-      label: 'Guia',
+        value: 'guia',
+        label: 'Guia',
     },
 ];
 
-export default function Register(){
+export default function Register() {
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
 
-    const {register, handleSubmit} = useForm();
+    const { register, handleSubmit } = useForm();
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmpasswordError, setConfirmPasswordError] = useState("");
@@ -61,44 +61,50 @@ export default function Register(){
     const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i
     const passwordPattern = /^(?=.*\d)[0-9a-zA-Z$*&@#]{6,}$/
 
-    const handleFormSubmit = (formData : any) => {
-        console.log('form data is ',formData);
-        if(!formData.input_email || !formData.input_email.length){
+    const handleFormSubmit = (formData: any) => {
+        console.log('form data is ', formData);
+        if (!formData.email || !formData.email.length) {
             setEmailError("Informe um email")
             return false;
         }
-            else if(!emailPattern.test(formData.input_email)){
-                setEmailError("Informe um email válido")
-                return false;
-            } else {
-                setEmailError("");
-            }
+        else if (!emailPattern.test(formData.email)) {
+            setEmailError("Informe um email válido")
+            return false;
+        } else {
+            setEmailError("");
+        }
 
-        if(!formData.input_password || !formData.input_password.length){
+        if (!formData.password || !formData.password.length) {
             setPasswordError("Informe uma senha")
             return false;
         }
-            else if(!passwordPattern.test(formData.input_password)){
-                setPasswordError("A senha precisa de pelo menos 6 caracteres")
-                return false;
-            } else {
-                setPasswordError("");
-            }
-        
-        if(!formData.input_confirm_password || !formData.input_confirm_password.length){
+        else if (!passwordPattern.test(formData.password)) {
+            setPasswordError("A senha precisa de pelo menos 6 caracteres")
+            return false;
+        } else {
+            setPasswordError("");
+        }
+
+        if (!formData.input_confirm_password || !formData.input_confirm_password.length) {
             setConfirmPasswordError("Confirme a senha")
             return false;
         }
-            else if(formData.input_password != formData.input_confirm_password){
-                setConfirmPasswordError("As senhas precisam ser iguais")
-                return false;
-            } else {
-                setConfirmPasswordError("");
-            }
-        
-        return true;        
+        else if (formData.password != formData.input_confirm_password) {
+            setConfirmPasswordError("As senhas precisam ser iguais")
+            return false;
+        } else {
+            setConfirmPasswordError("");
+        }
+
+
+        fetch('http://localhost:3333/user/', {
+            method: 'POST',
+            body: JSON.stringify(formData)
+        }).then(response => response.json()).then(data => console.log('data', data))
+
+        return true;
     }
-        
+
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
             <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0 z-100'>
@@ -121,8 +127,8 @@ export default function Register(){
                 <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
             </div>
             <div className="text-center">
-                <Box 
-                    component="form" 
+                <Box
+                    component="form"
                     onSubmit={handleSubmit(handleFormSubmit)}
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div>
@@ -135,11 +141,11 @@ export default function Register(){
                             required
                             autoFocus
                             helperText={emailError}
-                            {...register('input_email')}
+                            {...register('email')}
                         />
                     </div>
                     <div>
-                        <TextField 
+                        <TextField
                             sx={{ m: 1, width: '35ch' }}
                             id="select_profile"
                             select
@@ -150,11 +156,11 @@ export default function Register(){
                             }}
                             variant="standard"
                             required
-                            {...register('select_profile')}
-                            >
+                            {...register('group')}
+                        >
                             {TypeProfile.map((option) => (
                                 <option key={option.value} value={option.value}>
-                                {option.label}
+                                    {option.label}
                                 </option>
                             ))}
                         </TextField>
@@ -164,9 +170,9 @@ export default function Register(){
                             <InputLabel htmlFor="password" >Senha</InputLabel>
                             <Input
                                 error={passwordError && passwordError.length ? true : false}
-                                id="input_password"                                
-                                type={showPassword ? 'text' : 'password'}  
-                                {...register('input_password')}                          
+                                id="input_password"
+                                type={showPassword ? 'text' : 'password'}
+                                {...register('password')}
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
@@ -189,17 +195,17 @@ export default function Register(){
                                 error={confirmpasswordError && confirmpasswordError.length ? true : false}
                                 id="input_confirm_password"
                                 type={showPassword ? 'text' : 'password'}
-                                {...register('input_confirm_password')} 
+                                {...register('input_confirm_password')}
                                 endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={handleClickShowPassword}
-                                        onMouseDown={handleMouseDownPassword}
-                                    >
-                                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                </InputAdornment>
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            aria-label="toggle password visibility"
+                                            onClick={handleClickShowPassword}
+                                            onMouseDown={handleMouseDownPassword}
+                                        >
+                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                        </IconButton>
+                                    </InputAdornment>
                                 }
                             />
                             <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
