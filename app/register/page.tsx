@@ -97,7 +97,7 @@ export default function Register() {
         }
 
 
-        fetch('http://localhost:3333/user/', {
+        fetch('http://localhost:3333/user/createUser', {
             method: 'POST',
             body: JSON.stringify(formData)
         }).then(response => response.json()).then(data => console.log('data', data))
