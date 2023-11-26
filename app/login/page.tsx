@@ -68,7 +68,7 @@ export default function Login(){
 
     return (
         <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-12 py-4">
-            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 left-0 z-100'>
+            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 right-0'>
                 <Image
                     src="/images/img_abs_01.png"
                     alt="forma abstrata direita"
