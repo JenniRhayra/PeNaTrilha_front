@@ -64,18 +64,18 @@ export const ListUser = () => {
       <Table size='small' sx={{ ":right": "100" }}>
         <TableHead>
           <TableRow>
-            <TableCell color="primary" align="center">Nome</TableCell>
             <TableCell align="center">E-mail</TableCell>
             <TableCell align="center">Grupo</TableCell>
+            <TableCell align="center">Deletar</TableCell>
+            <TableCell align="center">Alterar</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {users?.map((item) =>
             <>
               <TableRow>
-                <TableCell align="center">{item?.name}</TableCell>
                 <TableCell align="center">{item?.email}</TableCell>
-                <TableCell align="center">{'Pe na trilha'}</TableCell>
+                <TableCell align="center">{item?.group}</TableCell>
                 <TableCell align="center"><Button className="bg-blue-50" onClick={() => onDelete(item)}>Deletar</Button></TableCell>
                 <TableCell align="center"><Button className="bg-blue-50" onClick={() => onUpdate(item)}>Alterar</Button></TableCell>
               </TableRow>
