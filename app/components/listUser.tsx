@@ -45,6 +45,19 @@ export const ListUser = () => {
     }
   };
 
+  const onUpdate = async (value: any) => {
+    const user_id = value.id;
+    console.log('user_id:', user_id);
+    try {
+      await fetch(`http://localhost:3333/user/${user_id}`, {
+        method: 'POST',
+      });
+      alert('Usuário editado');
+    } catch (error) {
+      alert('Erro ao editar usuário');
+    }
+  };
+
 
   return (
     <TableContainer component={Paper} variant="elevation">
@@ -64,6 +77,7 @@ export const ListUser = () => {
                 <TableCell align="center">{item?.email}</TableCell>
                 <TableCell align="center">{'Pe na trilha'}</TableCell>
                 <TableCell align="center"><Button className="bg-blue-50" onClick={() => onDelete(item)}>Deletar</Button></TableCell>
+                <TableCell align="center"><Button className="bg-blue-50" onClick={() => onUpdate(item)}>Alterar</Button></TableCell>
               </TableRow>
             </>
           )}
