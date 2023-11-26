@@ -57,7 +57,7 @@ export default function Login(){
         }).then(response => response.json()).then(data => console.log('data', data))
         
         alert("Usuário validado com sucesso!");
-        handleRedirect('/home');
+        handleRedirect('/admin_view');
         
         } catch (error) {
             alert(error)
@@ -67,17 +67,25 @@ export default function Login(){
     }
 
     return (
-        <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#90a876] container mx-auto px-12 py-4">
+        <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-12 py-4">
+            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 left-0 z-100'>
+                <Image
+                    src="/images/img_abs_01.png"
+                    alt="forma abstrata direita"
+                    width={200}
+                    height={200}
+                />
+            </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
                 <Image
-                    src="/images/penatrilha_logo_g.png"
+                    src="/images/penatrilha_logo_w.png" 
                     alt="logo pe na trilha"
                     width={400}
                     height={400}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
-                <h1 className="text-[#212816] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Login</h1>
+                <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Login</h1>
             </div>
             <div className="text-center">
                 <Box 
@@ -116,7 +124,8 @@ export default function Login(){
                         <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" onClick={onsubmitHandle}>ENTRAR</Button>
                     </div>
                     <div>
-                        <Link href="#">Esqueci minha senha</Link>
+                        <label className='lbl_login'> Ainda não tem cadastro? </label> <br></br>
+                        <Link id='link_register' href="/register">CADASTRE-SE</Link>
                     </div>
                 </Box>
             </div>
