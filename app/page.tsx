@@ -25,7 +25,7 @@ const ColorButton2 = styled(Button)<ButtonProps>(({ theme }) => ({
 }));
 
 
-export default function Home() {
+export default function Start() {
     return (
         <div className="flex flex-col h-screen min-h-screen bg-[#90A876]">
             <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 left-0 z-100'>
@@ -53,7 +53,7 @@ export default function Home() {
                     sx={{ m: 1 }}
                     >
                     <div>
-                        <ColorButton1 sx={{ width: '40ch' }} variant="contained" href="#">FAZER LOGIN</ColorButton1>
+                        <ColorButton1 sx={{ width: '40ch' }} variant="contained" href="/login">FAZER LOGIN</ColorButton1>
                     </div>
                     <div>
                         <p className="text-[#ffffff] my-1">OU</p>
