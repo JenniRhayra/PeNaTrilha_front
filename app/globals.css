@@ -7,7 +7,14 @@ body {
 }
 
 #btn_login {
-    background-color: #212816;
+    background-color: #414D33;
 }
 
+.lbl_login {
+    color: #C1C1C1
+}
+
+#link_register {
+    color: #343341
+}
 
