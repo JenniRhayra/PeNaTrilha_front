@@ -39,9 +39,10 @@ export const ListUser = () => {
       await fetch(`http://localhost:3333/user/${user_id}`, {
         method: 'DELETE',
       });
-      alert('Usuário deletado');
+      // alert('Usuário deletado');
+      listUsers()
     } catch (error) {
-      alert('Erro ao deletar usuário');
+      // alert('Erro ao deletar usuário');
     }
   };
 
