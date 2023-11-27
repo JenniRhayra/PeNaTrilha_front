@@ -54,20 +54,20 @@ export default function Home() {
 
   return (
     <main className="bg-[#F8F8F8]">
-      <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 left-0 z-100'>
+      <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 -top-5 left-0 z-100'>
         <Image
             src="/images/img_abs_03.png"
             alt="forma abstrata"
-            width={300}
-            height={300}
+            width={160}
+            height={160}
         />
       </div>
       <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
           <Image
               src="/images/penatrilha_logo_w_sf.png"
               alt="logo pe na trilha"
-              width={400}
-              height={400}
+              width={300}
+              height={300}
           />
       </div>
       <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Contas criadas</h1>

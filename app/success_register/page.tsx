@@ -7,15 +7,6 @@ import Button, { ButtonProps } from '@mui/material/Button';
 import Link from "next/link";
 import Image from 'next/image';
 
-
-const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
-    color: theme.palette.getContrastText('#414D33'),
-    backgroundColor: '#414D33',
-    '&:hover': {
-      backgroundColor: '#7D9662',
-    },
-}));
-
 export default function Success_Register(){        
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
@@ -23,16 +14,16 @@ export default function Success_Register(){
                 <Image
                     src="/images/img_abs_01.png"
                     alt="forma abstrata"
-                    width={300}
-                    height={300}
+                    width={160}
+                    height={160}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
                     alt="logo pe na trilha"
-                    width={400}
-                    height={400}
+                    width={300}
+                    height={300}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
@@ -52,7 +43,7 @@ export default function Success_Register(){
                     component="form" 
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div className='mt-1'>
-                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained" href="#">EDITAR PERFIL</ColorButton>
+                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" href="../create_account">EDITAR PERFIL</Button>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">ou</p>

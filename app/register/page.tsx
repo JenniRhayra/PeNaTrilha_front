@@ -10,22 +10,12 @@ import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import { styled } from '@mui/material/styles';
-import Button, { ButtonProps } from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
-
-
-const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
-    color: theme.palette.getContrastText('#414D33'),
-    backgroundColor: '#414D33',
-    '&:hover': {
-        backgroundColor: '#7D9662',
-    },
-}));
 
 const TypeProfile = [
     {
@@ -59,7 +49,11 @@ export default function Register() {
     const [confirmpasswordError, setConfirmPasswordError] = useState("");
 
     const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i
-    const passwordPattern = /^(?=.*\d)[0-9a-zA-Z$*&@#]{6,}$/
+    const passwordPattern = /^(?=.*)[0-9a-zA-Z$*&@#]{6,}$/
+
+    const handleRedirect = async (newPath: string) => {
+        location.pathname = newPath;
+    }
 
     const handleFormSubmit = (formData: any) => {
         console.log('form data is ', formData);
@@ -102,25 +96,27 @@ export default function Register() {
             body: JSON.stringify(formData)
         }).then(response => response.json()).then(data => console.log('data', data))
 
+        handleRedirect('/success_register');
+
         return true;
     }
 
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
-            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0 z-100'>
+            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 -right-2 z-100'>
                 <Image
                     src="/images/img_abs_01.png"
                     alt="forma abstrata"
-                    width={300}
-                    height={300}
+                    width={200}
+                    height={200}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
                     alt="logo pe na trilha"
-                    width={400}
-                    height={400}
+                    width={300}
+                    height={300}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
@@ -210,9 +206,10 @@ export default function Register() {
                             />
                             <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
                         </FormControl>
+                        <p className='text-sm text-left ml-5 text-[#ee4a4a] font-bold'>{confirmpasswordError}</p>
                     </div>
                     <div className='my-10'>
-                        <ColorButton id='button' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</ColorButton>
+                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</Button>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">Já tem uma conta?</p>

@@ -61,7 +61,7 @@ export default function Start() {
                     </div>
                 </Box>
             </div>
-            <div className='relative bottom-0'>
+            {/* <div className='relative bottom-0'>
                 <Image
                     src="/images/img_abs_02.png"
                     alt="forma abstrata direita"
@@ -69,7 +69,7 @@ export default function Start() {
                     width={400}
                     height={400}
                 />
-            </div>
+            </div> */}
         </div>
     );
 }

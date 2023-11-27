@@ -16,17 +16,10 @@ import { IMaskInput } from 'react-imask';
 import { useForm } from 'react-hook-form';
 import { useState } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import Link from "next/link";
 import Image from 'next/image';
-
-
-const ColorButton = styled(Button)<ButtonProps>(({ theme }) => ({
-    color: theme.palette.getContrastText('#414D33'),
-    backgroundColor: '#414D33',
-    '&:hover': {
-      backgroundColor: '#7D9662',
-    },
-}));
 
 const TypePark = [
     {
@@ -110,6 +103,10 @@ export default function Create_Account(){
     const [nameError, setnameError] = useState("");
     const [parkError, setParkError] = useState("");
 
+    const handleRedirect = async (newPath: string) => {
+        location.pathname = newPath;
+    }
+
     const handleFormSubmit = (formData : any) => {
         console.log('form data is ',formData);
         if(!formData.input_name || !formData.input_name.length){
@@ -119,32 +116,33 @@ export default function Create_Account(){
             setnameError("");
         }
 
-        if(!formData.select_park || !formData.select_park.length){
-            setParkError("Informe um parque")
-            return false;
-        } else {
-            setParkError("");
-        }
-        
+        // if(!formData.select_park || !formData.select_park.length){
+        //     setParkError("Informe um parque")
+        //     return false;
+        // } else {
+        //     setParkError("");
+        // }
+        handleRedirect('/');
+
         return true;        
     }
 
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
-            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0 z-100'>
+            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0'>
                 <Image
                     src="/images/img_abs_01.png"
                     alt="forma abstrata"
-                    width={300}
-                    height={300}
+                    width={160}
+                    height={160}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
                     alt="logo pe na trilha"
-                    width={400}
-                    height={400}
+                    width={300}
+                    height={300}
                 />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
@@ -160,7 +158,7 @@ export default function Create_Account(){
                         <TextField
                             label="Nome completo"
                             id="input_name"
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             variant="standard"
                             required
                             autoFocus
@@ -173,13 +171,13 @@ export default function Create_Account(){
                         <TextField
                             label="Gostaria de ser chamado(a) de..."
                             id="input_slugname"
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             variant="standard"
                             {...register('input_slugname')}
                         />
                     </div>
                     <div>
-                        <FormControl sx={{ m: 1, width: '45ch' }} variant="standard">
+                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
                             <InputLabel htmlFor="formatted-phone-mask-input">Telefone</InputLabel>
                             <Input
                                 //name="phonemask"
@@ -189,8 +187,8 @@ export default function Create_Account(){
                             />
                         </FormControl>
                     </div>
-                    <div className='flex flex-col items-center justify-center'>
-                        <FormControl required>
+                    <div className='flex flex-col text-left'>
+                        <FormControl required sx={{ m: 2, width: '35ch' }}>
                             <FormLabel id="row-radio-buttons">Sexo</FormLabel>
                             <RadioGroup
                                 row
@@ -206,7 +204,7 @@ export default function Create_Account(){
                         </FormControl>
                     </div>
                     <div>
-                        <FormControl sx={{ m: 1, width: '45ch' }} variant="standard">
+                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
                             <InputLabel htmlFor="formatted-date-mask-input">Data de Nascimento</InputLabel>
                             <Input
                                 //name="datemask"
@@ -218,53 +216,55 @@ export default function Create_Account(){
                     </div>
                     <div>
                         <TextField
-                            label="Especialidades: botânica, observação de aves..."
+                            label="Especialidades"
+                            placeholder="Botânica, observação de aves..."
                             id="input_espec"
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             variant="standard"
                             {...register('input_espec')}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-center'>
                         <Autocomplete
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             multiple
                             id="select_park"
                             options={TypePark}
+                            getOptionLabel={(option) => option.label}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     variant="standard"
                                     label="Parques"
                                     placeholder="Selecionar parque"
-                                    required
-                                    error={parkError && parkError.length ? true : false}
-                                    helperText={parkError}
-                                    {...register('select_park')}
+                                    // error={parkError && parkError.length ? true : false}
+                                    // helperText={parkError}          
                                 />
                             )}
+                            {...register('select_park')}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-center'>
                         <Autocomplete
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             multiple
                             id="select_language"
                             options={TypeLanguage}
+                            getOptionLabel={(option) => option.label}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     variant="standard"
                                     label="Idiomas"
                                     placeholder="Selecionar idioma"
-                                    {...register('select_language')}
                                 />
                             )}
+                            {...register('select_language')}
                         />
                     </div>
                     <div>
                         <TextField
-                            sx={{ m: 1, width: '45ch' }}
+                            sx={{ m: 1, width: '35ch' }}
                             id="box_description"
                             label="Descrição"
                             multiline
@@ -274,15 +274,15 @@ export default function Create_Account(){
                         />
                     </div>
                     <div className='flex flex-col items-center justify-start'>
-                        <p className='m-1 w-[45ch] text-[#C1C1C1] text-left'>
+                        <p className='m-1 w-[35ch] text-[#C1C1C1] text-left'>
                             IMPORTANTE: seu perfil como guia só será disponibilizado depois que o(s) parque(s) informado(s) reconhecer(em) seu perfil como guia.
                         </p>
                     </div>
                     <div className='mt-10'>
-                        <ColorButton id='button' sx={{ m: 1, width: '50ch' }} variant="contained" type='submit'>CADASTRAR</ColorButton>
+                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</Button>
                     </div>
                     <div>
-                        <Link href="#">TERMINAR DEPOIS</Link>
+                        <Link href="../">TERMINAR DEPOIS</Link>
                     </div>
                 </Box>
             </div>
