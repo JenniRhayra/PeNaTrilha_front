@@ -4,28 +4,28 @@ import { Button, Grid, TextField } from "@mui/material"
 import { stringify } from "querystring"
 import { useState } from "react"
 import { json } from "stream/consumers"
+import { getUserId } from "../components/updateUser"
+
+interface IProps {
+    user_id: string;
+}
 
 interface User {
-    name: string;
+    id: string;
     email: string;
-    group: string;
     password: string;
 }
 
-export const CreateUser = () => {
+export default function UpdateUser({ user_data }: User) {
+    
     const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
+    const [newEmail, setEmail] = useState('')
     const [group, setGroup] = useState('')
-    const [password, setPassword] = useState('')
+    const [newPassword, setPassword] = useState('')
     const user: User = {
-        name: "",
+        id: '',
         email: "",
-        group: "",
         password: ""
-    }
-
-    const handleChangeName = (prop: any) => {
-        setName(prop.target.value)
     }
 
     const handleChangeEmail = (prop: any) => {
@@ -41,16 +41,13 @@ export const CreateUser = () => {
     }
 
     const onsubmitHandle = async () => {
-        user.name = name
-        user.email = email
-        user.group = group
-        user.password = password
+        user.id = user_data?.id
+        user.email = newEmail
+        user.password = newPassword
 
-        console.log('JSON.stringify(user)', JSON.stringify(user))
-        console.log('user', user)
         try {
-            const response = await fetch('http://localhost:3333/user/', {
-                method: 'POST',
+            const response = await fetch(`http://localhost:3333/user/`, {
+                method: 'PUT',
                 body: JSON.stringify(user),
             })
 
@@ -69,19 +66,16 @@ export const CreateUser = () => {
     return (
         <Grid container direction="column" justifyContent="center" alignItems="center" rowSpacing={5}>
             <Grid item>
-                <TextField id="name" label="nome" variant="outlined" size='small' onChange={(e) => handleChangeName(e)} />
-            </Grid>
-            <Grid item>
-                <TextField id="email" label="e-mail" variant="outlined" size='small' onChange={(e) => handleChangeEmail(e)} />
+                <TextField id="email" label="e-mail" variant="outlined" size='small' value={user_data?.email} onChange={(e) => handleChangeEmail(e)} />
             </Grid>
             {/* <Grid item>
             <TextField id="group" label="grupo" variant="outlined" size='small' onChange={(e) => handleChangeGroup(e)}/> 
         </Grid> */}
             <Grid item>
-                <TextField id="password" label="senha" variant="outlined" size='small' onChange={(e) => handleChangePassword(e)} />
+                <TextField id="password" label="senha" variant="outlined" size='small' value={user_data?.password} onChange={(e) => handleChangePassword(e)}  />
             </Grid>
             <Grid item >
-                <Button className="bg-white" fullWidth variant="outlined" color="warning" onClick={onsubmitHandle}>Cadastrar</Button>
+                <Button className="bg-white" fullWidth variant="outlined" color="warning" onClick={(e) => onsubmitHandle()} >Salvar Alterações</Button>
             </Grid>
         </Grid>
     )

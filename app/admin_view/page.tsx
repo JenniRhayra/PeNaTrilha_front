@@ -10,7 +10,7 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import TextField from '@mui/material/TextField';
 import { Grid } from '@mui/material';
-import { CreateUser } from '../components/createUser';
+import { CreateUser } from '../components/updateUser';
 import Image from 'next/image';
 
 export default function Home() {
