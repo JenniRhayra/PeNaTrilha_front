@@ -6,7 +6,11 @@ body {
     background: #F8F8F8
 }
 
-#btn_login {
+.body_green {
+    background: #7D9662
+}
+
+/* #btn_login {
     background-color: #414D33;
 }
 
@@ -16,5 +20,61 @@ body {
 
 #link_register {
     color: #343341
+} */
+
+
+/*Footer Menu*/
+.footerMenu {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background-color: #ffffff;
+}
+  
+.footerMenu a {
+    color: #414D33;
+    text-decoration: none;
+    padding: 10px;
+    transition: all 0.3s ease;
+}
+  
+.footerMenu a:hover {
+    transform: translateY(-3px);
+}
+  
+.active {
+    color: #DFBA2B;
+    font-size: 35px;
+    transform: scale(1.5);
+    margin-top: -11px;
 }
 
+/*Header*/
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background-color: transparent;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.actions a {
+    margin-left: 10px;
+    margin-right: 20px;
+    color: #414D33;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 25px;
+}
+
+.content {
+    margin-top: 70px; /* Ajuste a margem superior para ser igual à altura do cabeçalho */
+}
