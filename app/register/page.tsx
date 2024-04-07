@@ -90,11 +90,16 @@ export default function Register() {
             setConfirmPasswordError("");
         }
 
+        try {
+            fetch('http://localhost:3333/user/createUser', {
+                method: 'POST',
+                body: JSON.stringify(formData)
+            }).then(response => response.json()).then(data => console.log('data', data))   
+        } catch (error) {
+            alert('|Erro')
+            return false
+        }
 
-        fetch('http://localhost:3333/user/createUser', {
-            method: 'POST',
-            body: JSON.stringify(formData)
-        }).then(response => response.json()).then(data => console.log('data', data))
 
         handleRedirect('/success_register');
 
