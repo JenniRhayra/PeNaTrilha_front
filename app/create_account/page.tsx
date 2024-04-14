@@ -6,8 +6,6 @@ import TextField from '@mui/material/TextField';
 import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
-import { styled } from '@mui/material/styles';
-import Button, { ButtonProps } from '@mui/material/Button';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -16,10 +14,10 @@ import { IMaskInput } from 'react-imask';
 import { useForm } from 'react-hook-form';
 import { useState } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
 import Link from "next/link";
 import Image from 'next/image';
+import ButtonGreen from '../components/buttonGreen';
+import PhotoUploader from '../components/photoUploader';
 
 const TypePark = [
     {
@@ -149,6 +147,10 @@ export default function Create_Account(){
                 <h1 className="text-[#4D5D47] mb-0 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
                 <h1 className="text-[#FFD21D] mb-4 text-xl lg:text-2xl uppercase font-bold text-center">guia</h1>
             </div>
+            <div>
+            <h1>Upload de Imagem</h1>
+                <PhotoUploader />
+            </div>
             <div className="text-center">
                 <Box 
                     component="form" 
@@ -187,7 +189,7 @@ export default function Create_Account(){
                             />
                         </FormControl>
                     </div>
-                    <div className='flex flex-col text-left'>
+                    <div className='flex flex-col items-center justify-center text-left'>
                         <FormControl required sx={{ m: 2, width: '35ch' }}>
                             <FormLabel id="row-radio-buttons">Sexo</FormLabel>
                             <RadioGroup
@@ -279,7 +281,7 @@ export default function Create_Account(){
                         </p>
                     </div>
                     <div className='mt-10'>
-                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</Button>
+                        <ButtonGreen width= '40ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
                     <div>
                         <Link href="../">TERMINAR DEPOIS</Link>

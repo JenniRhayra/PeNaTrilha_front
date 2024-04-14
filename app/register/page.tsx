@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
+import ButtonGreen from '../components/buttonGreen';
 
 const TypeProfile = [
     {
@@ -214,7 +215,7 @@ export default function Register() {
                         <p className='text-sm text-left ml-5 text-[#ee4a4a] font-bold'>{confirmpasswordError}</p>
                     </div>
                     <div className='my-10'>
-                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" type='submit'>CADASTRAR</Button>
+                    <ButtonGreen width= '38ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">Já tem uma conta?</p>

@@ -7,10 +7,10 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
-import Button from '@mui/material/Button';
 import Link from "next/link";
 import Image from 'next/image';
 import { useState } from "react";
+import ButtonGreen from '../components/buttonGreen';
 
 export default function Login(){
     const [showPassword, setShowPassword] = React.useState(false);
@@ -121,7 +121,7 @@ export default function Login(){
                         />
                     </div>
                     <div>
-                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" onClick={onsubmitHandle}>ENTRAR</Button>
+                        <ButtonGreen width= '38ch' onClick={onsubmitHandle} href='#'>ENTRAR</ButtonGreen>
                     </div>
                     <div>
                         <label className='lbl_login'> Ainda não tem cadastro? </label> <br></br>
