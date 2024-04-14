@@ -1,29 +1,10 @@
 'use client'
 
-import Login from './login/page';
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import Button, { ButtonProps } from '@mui/material/Button';
-import Link from "next/link";
 import Image from 'next/image';
-
-const ColorButton1 = styled(Button)<ButtonProps>(({ theme }) => ({
-    color: theme.palette.getContrastText('#1C2312'),
-    backgroundColor: '#1C2312',
-    '&:hover': {
-        backgroundColor: '#414D33',
-    },
-}));
-
-const ColorButton2 = styled(Button)<ButtonProps>(({ theme }) => ({
-    color: theme.palette.getContrastText('#414D33'),
-    backgroundColor: '#414D33',
-    '&:hover': {
-        backgroundColor: '#7D9662',
-    },
-}));
-
+import ButtonGreen from './components/buttonGreen';
+import ButtonBlack from './components/buttonBlack';
 
 export default function Start() {
     return (
@@ -53,11 +34,11 @@ export default function Start() {
                     sx={{ m: 1 }}
                     >
                     <div>
-                        <ColorButton1 sx={{ width: '40ch' }} variant="contained" href="/login">FAZER LOGIN</ColorButton1>
+                        <ButtonBlack width= '35ch' href="/login">FAZER LOGIN</ButtonBlack>
                     </div>
                     <div>
                         <p className="text-[#ffffff] my-1">OU</p>
-                        <ColorButton2 sx={{ width: '40ch' }} variant="contained" href="#">COMEÇAR SEM LOGIN</ColorButton2>
+                        <ButtonGreen width= '35ch' href="#">COMEÇAR SEM LOGIN</ButtonGreen>
                     </div>
                 </Box>
             </div>

@@ -2,10 +2,9 @@
 
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { styled } from '@mui/material/styles';
-import Button, { ButtonProps } from '@mui/material/Button';
 import Link from "next/link";
 import Image from 'next/image';
+import ButtonGreen from '../components/buttonGreen';
 
 export default function Success_Register(){        
     return (
@@ -43,7 +42,7 @@ export default function Success_Register(){
                     component="form" 
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div className='mt-1'>
-                        <Button id='btn_login' sx={{ m: 1, width: '40ch' }} variant="contained" href="../create_account">EDITAR PERFIL</Button>
+                        <ButtonGreen width= '40ch' href="../create_account">EDITAR PERFIL</ButtonGreen>
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">ou</p>
