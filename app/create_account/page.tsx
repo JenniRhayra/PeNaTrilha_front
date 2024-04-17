@@ -147,9 +147,9 @@ export default function Create_Account(){
                 <h1 className="text-[#4D5D47] mb-0 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
                 <h1 className="text-[#FFD21D] mb-4 text-xl lg:text-2xl uppercase font-bold text-center">guia</h1>
             </div>
-            <div>
-            <h1>Upload de Imagem</h1>
+            <div className='flex items-center justify-center text-left'>
                 <PhotoUploader />
+                <h1 className='ml-2'>Selecionar foto</h1>
             </div>
             <div className="text-center">
                 <Box 
