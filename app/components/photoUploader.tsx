@@ -28,7 +28,6 @@ const ImageUpload: React.FC = () => {
             height: '150px',
             borderRadius: '50%',
             overflow: 'hidden',
-            border: '2px solid #ccc',
             backgroundColor: '#f0f0f0',
           }}
         >
@@ -41,9 +40,13 @@ const ImageUpload: React.FC = () => {
               style={{ borderRadius: '50%' }} // Ensure the image fits the circle
             />
           ) : (
-            <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-              <img src="/images/figure1.png" alt="Default Image" />
-            </span>
+            <Image
+              src="/images/figure1.png"
+              alt="Default Image"
+              layout="fill"
+              objectFit="cover"
+              style={{ borderRadius: '50%' }} // Ensure the default image fills the circle
+            />
           )}
         </div>
         <input

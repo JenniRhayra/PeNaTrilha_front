@@ -8,7 +8,7 @@ import ButtonBlack from './components/buttonBlack';
 
 export default function Start() {
     return (
-        <div className="flex flex-col h-screen min-h-screen bg-[#90A876]">
+        <div className="flex flex-col min-h-screen bg-[#90A876]">
             <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 left-0 z-100'>
                 <Image
                     src="/images/img_abs_03.png"
@@ -28,11 +28,11 @@ export default function Start() {
             <div className='col-span-12 lg:col-span-5 grid place-items-center my-1'>
                 <h1 className="text-[#ffffff] text-2xl lg:text-3xl uppercase font-bold text-center mt-5">Vamos começar?</h1>
             </div>
-            <div className="text-center">
+            <div className="text-center flex-grow">
                 <Box
                     component="form"
                     sx={{ m: 1 }}
-                    >
+                >
                     <div>
                         <ButtonBlack width= '35ch' href="/login">FAZER LOGIN</ButtonBlack>
                     </div>

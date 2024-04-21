@@ -11,7 +11,7 @@ interface FooterMenuProps {
 
 const FooterMenu: React.FC<FooterMenuProps> = ({ activePage }) => {
   return (
-    <div className="footerMenu">
+    <div className="footerMenu" style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', backgroundColor: 'white', zIndex: 999 }}>
       <Link href="/home" passHref>
         <div className={activePage === 'home' ? 'active' : ''}>
           <AiOutlineHome size={30} />
