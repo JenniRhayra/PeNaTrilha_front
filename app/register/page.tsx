@@ -17,6 +17,7 @@ import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
 import ButtonGreen from '../components/buttonGreen';
+import ButtonBack from '../components/buttonBack';
 
 const TypeProfile = [
     {
@@ -116,6 +117,9 @@ export default function Register() {
                     width={200}
                     height={200}
                 />
+            </div>
+            <div>
+                <ButtonBack/>
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
                 <Image
