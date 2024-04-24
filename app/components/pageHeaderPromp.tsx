@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
 
@@ -78,10 +78,10 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, s
         <div
           style={{
             position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)', // Corrigido aqui
-            zIndex: 1,
+            top: '25%',
+            left: '80%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 2,
           }}
           onClick={handleCheckClick}
         >
@@ -89,11 +89,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, s
             style={{
               cursor: 'pointer',
               borderRadius: '50%',
-              backgroundColor: checked ? '#5cb85c' : 'rgba(0, 0, 0, 0.7)',
+              backgroundColor: checked ? '#5cb85c' : '#B6B2B2',
               padding: '5px',
             }}
           >
-            <FaCheck size={24} color="white" />
+            <FaCheck size={28} color="white" />
           </div>
         </div>
       )}
