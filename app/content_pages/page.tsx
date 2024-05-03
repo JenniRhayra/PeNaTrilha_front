@@ -6,7 +6,7 @@ import FooterMenu from '../components/footerMenu';
 const ContentPage: React.FC = () => {
   return (
     <div>
-      <PageHeader backgroundImageUrl="/images/parque-carlos-botelho.jpg" showCheck={true}>
+      <PageHeader backgroundImageUrl="/images/parque-carlos-botelho.jpg" showCheck={true} title="PE CARLOS BOTELHO">
         {/* Conteúdo dentro do retângulo branco */}
         <h1>Título da Página</h1>
         <p>Conteúdo da página...</p>
