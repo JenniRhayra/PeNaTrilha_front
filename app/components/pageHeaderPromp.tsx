@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
+import { FaLocationDot } from "react-icons/fa6";
 
 interface PageHeaderProps {
   backgroundImageUrl: string;
+  title: string;
   children: React.ReactNode;
   showCheck?: boolean; // Propriedade opcional para determinar se o componente de check deve ser exibido
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, showCheck = false }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, children, showCheck = false }) => {
   const [checked, setChecked] = useState(false);
   const navigation = useRouter();
 
@@ -44,8 +46,22 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, s
       >
         {/* Camada de degradê preto com 90% de transparência */}
         <div
-          style={{ width: '100%', height: '100%', background: 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))' }}
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            background: 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))' }}
         ></div>
+        {/* Título */}
+        <h1 style={{ 
+          position: 'absolute', 
+          top: '70px', 
+          transform: 'translateX(5%)', 
+          color: 'white', 
+          alignItems: 'left',
+          padding: '20px',
+          fontSize: '1.8rem',
+          fontWeight: 'bold',
+          zIndex: 1 }}>{title}</h1>
       </div>
 
       {/* Ícones de voltar e compartilhar */}
@@ -64,12 +80,12 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, s
       >
         {/* Ícone de voltar */}
         <div style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.7)', padding: '5px' }} onClick={handleGoBack}>
-          <FiArrowLeft size={24} color="white" />
+          <FiArrowLeft size={30} color="white" />
         </div>
 
         {/* Ícone de compartilhar */}
         <div style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.7)', padding: '5px' }} onClick={handleShare}>
-          <FiShare2 size={24} color="white" />
+          <FiShare2 size={30} color="white" />
         </div>
       </div>
 
@@ -93,14 +109,15 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, children, s
               padding: '5px',
             }}
           >
-            <FaCheck size={28} color="white" />
+            <FaCheck size={35} color="white" />
           </div>
         </div>
       )}
 
       {/* Retângulo arredondado */}
-      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '20px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1 }}>
+      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1 }}>
         {/* Conteúdo dentro do retângulo */}
+        <FaLocationDot size={25} color="black" />
         {children}
       </div>
     </div>
