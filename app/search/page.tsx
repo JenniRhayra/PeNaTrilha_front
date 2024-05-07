@@ -13,10 +13,11 @@ const Search: React.FC = () => {
       <div className='content'> 
         <h1 className='text-center'>PÁGINA DE BUSCA</h1>
       </div>
-      <div style={{ margin: '0 auto', maxWidth: '800px', height: '20vh', padding: '20px' }}> {/* Reduzindo a altura pela metade */}
+      <div style={{ margin: '0 auto', padding: '20px',position:'relative'  }}>
         <LocationComponent />
       </div>
-      <div>
+      <div style={{ margin: '0 auto', padding: '20px', position:'relative', top:'0'}}>
+        <PageComponentList />
       </div>
       <FooterMenu activePage="search" />
     </div>
