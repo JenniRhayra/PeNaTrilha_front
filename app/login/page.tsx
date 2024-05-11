@@ -9,10 +9,16 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from "next/link";
 import Image from 'next/image';
+import { Slide, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useState } from "react";
 import ButtonGreen from '../components/buttonGreen';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import { authService } from '../services/axios-config/connection';
 
-export default function Login(){
+const toastId = 'fetched-nationalities';
+
+export default function Login() {
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -48,37 +54,26 @@ export default function Login(){
         user.email = email
         user.password = password
 
-        console.log('JSON.stringify(user)', JSON.stringify(user))
-        console.log('user', user)
         try {
-            fetch('http://localhost:3333/auth/', {
-            method: 'POST',
-            body: JSON.stringify(user)
-        }).then(response => response.json()).then(data => console.log('data', data))
-        
-        alert("Usuário validado com sucesso!");
-        handleRedirect('/admin_view');
-        
+            await authService.authenticateWithPassword(user)
+            toast.success('Conta logada com sucesso.');
+            handleRedirect('/home')
         } catch (error) {
-            alert(error)
+            toast.error('Ocorreu um erro ao realizar o login.');
         }
 
-        
+
     }
 
     return (
         <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-12 py-4">
-            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 right-0'>
-                <Image
-                    src="/images/img_abs_01.png"
-                    alt="forma abstrata direita"
-                    width={200}
-                    height={200}
-                />
+
+            <div className='absolute left-3 top-5 z-10'>
+                <ArrowBackIosNewIcon fontSize='large' />
             </div>
-            <div className='col-span-12 lg:col-span-5 grid place-items-center'>
+            <div className='relative bottom-36 col-span-12 lg:col-span-5 grid place-items-center'>
                 <Image
-                    src="/images/penatrilha_logo_w.png" 
+                    src="/images/penatrilha_logo_w.png"
                     alt="logo pe na trilha"
                     width={400}
                     height={400}
@@ -88,16 +83,16 @@ export default function Login(){
                 <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Login</h1>
             </div>
             <div className="text-center">
-                <Box 
-                    component="form" 
+                <Box
+                    component="form"
                     sx={{ display: 'block', p: 1, m: 1, }}>
                     <div>
                         <TextField
                             label="Email"
                             id="input_email"
                             sx={{ m: 1, width: '35ch' }}
-                            variant="outlined"  
-                            onChange={(e) => handleChangeEmail(e)} 
+                            variant="outlined"
+                            onChange={(e) => handleChangeEmail(e)}
                         />
                     </div>
                     <div>
@@ -121,13 +116,21 @@ export default function Login(){
                         />
                     </div>
                     <div>
-                        <ButtonGreen width= '38ch' onClick={onsubmitHandle} href='#'>ENTRAR</ButtonGreen>
+                        <ButtonGreen width='38ch' onClick={() => onsubmitHandle()} href='#'>ENTRAR</ButtonGreen>
                     </div>
-                    <div>
+                    <div className='mt-8 z-10 bottom-0'>
                         <label className='lbl_login'> Ainda não tem cadastro? </label> <br></br>
                         <Link id='link_register' href="/register">CADASTRE-SE</Link>
                     </div>
                 </Box>
+            </div>
+            <div className='absolute rotate-180 -bottom-0 -left-5 -z-20'>
+                <Image
+                    src="/images/img_abs_01.png"
+                    alt="forma abstrata direita"
+                    width={250}
+                    height={250}
+                />
             </div>
         </main>
     );
