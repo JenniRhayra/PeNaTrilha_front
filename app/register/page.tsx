@@ -17,23 +17,25 @@ import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
 import ButtonGreen from '../components/buttonGreen';
+import { usersService } from '../services/axios-config/connection';
+import { toast } from 'react-toastify';
 import ButtonBack from '../components/buttonBack';
 
 const TypeProfile = [
     {
-        value: 'admin',
+        value: '1',
         label: 'Administrador',
     },
     {
-        value: 'entidade',
-        label: 'Entidade/Parque',
-    },
-    {
-        value: 'visitante',
+        value: '2',
         label: 'Visitante',
     },
     {
-        value: 'guia',
+        value: '3',
+        label: 'Gerente',
+    },
+    {
+        value: '4',
         label: 'Guia',
     },
 ];
@@ -57,7 +59,7 @@ export default function Register() {
         location.pathname = newPath;
     }
 
-    const handleFormSubmit = (formData: any) => {
+    const handleFormSubmit = async (formData: any) => {
         console.log('form data is ', formData);
         if (!formData.email || !formData.email.length) {
             setEmailError("Informe um email")
@@ -92,18 +94,16 @@ export default function Register() {
             setConfirmPasswordError("");
         }
 
+        delete (formData.input_confirm_password)
+
         try {
-            fetch('http://localhost:3333/user/createUser', {
-                method: 'POST',
-                body: JSON.stringify(formData)
-            }).then(response => response.json()).then(data => console.log('data', data))   
+            await usersService.createUser(formData)
+            toast.success('Conta criada com sucesso.')
+            handleRedirect('/success_register');
         } catch (error) {
-            alert('|Erro')
+            // toast.error('Ocorreu um erro ao criar a sua conta')
             return false
         }
-
-
-        handleRedirect('/success_register');
 
         return true;
     }
@@ -153,7 +153,7 @@ export default function Register() {
                     <div>
                         <TextField
                             sx={{ m: 1, width: '35ch' }}
-                            id="select_profile"
+                            id="profile"
                             select
                             label="Perfil"
                             defaultValue="visitante"
@@ -219,10 +219,10 @@ export default function Register() {
                         <p className='text-sm text-left ml-5 text-[#ee4a4a] font-bold'>{confirmpasswordError}</p>
                     </div>
                     <div className='my-10'>
-                    <ButtonGreen width= '38ch' type='submit'>CADASTRAR</ButtonGreen>
+                        <ButtonGreen width='38ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
                     <div>
-                        <p className="text-[#C1C1C1]">Já tem uma conta?</p>
+                        <p className="text-[#C1C1C1] z-50">Já tem uma conta?</p>
                         <Link href="../login" underline="hover">FAZER LOGIN</Link>
 
                     </div>

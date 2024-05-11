@@ -9,8 +9,8 @@ const Home: React.FC = () => {
   return (
     <div>
       <Header />
-      <div className='content'> 
-          <h1 className='text-center'>Habemos Home Page</h1>
+      <div className='content'>
+        <h1 className='text-center'>Habemos Home Page</h1>
       </div>
       <FooterMenu activePage="home" />
     </div>
