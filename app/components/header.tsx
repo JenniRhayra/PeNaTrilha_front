@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
+import zIndex from '@mui/material/styles/zIndex';
 
 const Header: React.FC = () => {
 
@@ -9,7 +10,7 @@ const Header: React.FC = () => {
         location.pathname = newPath;
     }
     return (
-        <header className="header">
+        <header className="header" style={{background: '#F8F8F8', zIndex: 1}}>
             <div className="logo">
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
