@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
+import { AuthProvider } from './context/auth';
 export const metadata: Metadata = {
   title: 'Pé na Trilha',
   description: 'Aplicativo para você encontrar seu próximo eco-destino',
@@ -16,8 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <ToastContainer />
-      <body>{children}</body>
+      <AuthProvider>
+        <ToastContainer />
+        <body>{children}</body>
+      </AuthProvider>
 
     </html>
   )

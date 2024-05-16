@@ -9,17 +9,15 @@ import IconButton from '@mui/material/IconButton';
 import InputAdornment from '@mui/material/InputAdornment';
 import Link from "next/link";
 import Image from 'next/image';
-import { Slide, ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState } from "react";
 import ButtonGreen from '../components/buttonGreen';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import { authService } from '../services/axios-config/connection';
-import ButtonBack from '../components/buttonBack';
-
-const toastId = 'fetched-nationalities';
+import { AuthContext } from '../context/auth';
 
 export default function Login() {
+    const { login } = React.useContext(AuthContext)
+
     const [showPassword, setShowPassword] = React.useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -46,24 +44,11 @@ export default function Login() {
         setPassword(prop.target.value)
     }
 
-    const handleRedirect = async (newPath: string) => {
-
-        location.pathname = newPath;
-    }
-
     const onsubmitHandle = async () => {
         user.email = email
         user.password = password
 
-        try {
-            await authService.authenticateWithPassword(user)
-            toast.success('Conta logada com sucesso.');
-            handleRedirect('/home')
-        } catch (error) {
-            toast.error('Ocorreu um erro ao realizar o login.');
-        }
-
-
+        await login(user)
     }
 
     return (
@@ -124,80 +109,6 @@ export default function Login() {
                         <Link id='link_register' href="/register">CADASTRE-SE</Link>
                     </div>
                 </Box>
-        <main className="flex flex-col h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-0 py-4">
-            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 right-0'>
-                <Image
-                    src="/images/img_abs_01.png"
-                    alt="forma abstrata direita"
-                    width={200}
-                    height={200}
-                />
-            </div>
-            <div>
-                <ButtonBack/>
-            </div>
-            <div className='items-center justify-center '>
-                <div className='col-span-12 lg:col-span-5 grid place-items-center px-10'>
-                    <Image
-                        src="/images/penatrilha_logo_w.png" 
-                        alt="logo pe na trilha"
-                        width={400}
-                        height={400}
-                    />
-                </div>
-                <div className='col-span-12 lg:col-span-5 grid place-items-center'>
-                    <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Login</h1>
-                </div>
-                <div className="text-center">
-                    <Box 
-                        component="form" 
-                        sx={{ display: 'block', p: 1, m: 1 }}>
-                        <div>
-                            <TextField
-                                label="Email"
-                                id="input_email"
-                                sx={{ m: 1, width: '35ch' }}
-                                variant="outlined"  
-                                onChange={(e) => handleChangeEmail(e)} 
-                            />
-                        </div>
-                        <div>
-                            <TextField
-                                label="Senha"
-                                id="input_senha"
-                                sx={{ m: 1, width: '35ch' }}
-                                variant="outlined"
-                                type={showPassword ? 'text' : 'password'}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton></InputAdornment>,
-                                }}
-                                onChange={(e) => handleChangePassword(e)}
-                            />
-                        </div>
-                        <div>
-                            <ButtonGreen width= '38ch' onClick={onsubmitHandle} href='#'>ENTRAR</ButtonGreen>
-                        </div>
-                        <div>
-                            <label className='lbl_login'> Ainda não tem cadastro? </label> <br></br>
-                            <Link id='link_register' href="/register">CADASTRE-SE</Link>
-                        </div>
-                    </Box>
-                </div>
-            </div>
-            <div className='absolute rotate-180 -bottom-0 -left-5 -z-20'>
-                <Image
-                    src="/images/img_abs_01.png"
-                    alt="forma abstrata direita"
-                    width={250}
-                    height={250}
-                />
             </div>
         </main>
     );
