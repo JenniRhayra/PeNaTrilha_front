@@ -12,16 +12,15 @@ const SelectorContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 40px 0 10px 0;
+  margin: 70px 0 10px 0;
 `;
 
 const SelectorItem = styled.div<{ isActive: boolean }>`
   margin: 0 15px;
-  padding: 10px 15px;
+  padding: 10px 10px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: ${props => (props.isActive ? 'bold' : 'normal')};
-  border-bottom: ${props => (props.isActive ? '2px solid black' : 'none')};
   position: relative;
 `;
 
@@ -31,7 +30,7 @@ const SelectorDot = styled.div`
   background-color: black;
   border-radius: 50%;
   position: absolute;
-  bottom: -6px;
+  bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
 `;

@@ -70,6 +70,7 @@ const ArrowButton = styled.button<{ left?: boolean }>`
 
 const CarouselImages: React.FC<CarouselProps> = ({ images, titles, imageWidth, imageHeight, borderRadius, imageSpacing }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchX, setTouchX] = useState<number | null>(null);
 
   const handleNext = () => {
     if (currentIndex < images.length - 1) {
@@ -83,8 +84,28 @@ const CarouselImages: React.FC<CarouselProps> = ({ images, titles, imageWidth, i
     }
   };
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchX(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+  if (touchX !== null) {
+    const touchMoveX = e.touches[0].clientX;
+    const imagesMoved = Math.round((touchX - touchMoveX) / (imageWidth + imageSpacing));
+    setCurrentIndex(prevIndex => Math.max(0, Math.min(prevIndex + imagesMoved, images.length - 1)));
+  }
+};
+
+  const handleTouchEnd = () => {
+    setTouchX(null);
+  };
+
   return (
-    <CarouselContainer>
+    <CarouselContainer
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {currentIndex > 0 && (
         <ArrowButton left onClick={handlePrev}>
           <FiArrowLeft size={30} color="white" />
