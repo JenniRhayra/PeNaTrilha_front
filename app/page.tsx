@@ -34,11 +34,11 @@ export default function Start() {
                     sx={{ m: 1 }}
                 >
                     <div>
-                        <ButtonBlack width= '35ch' href="/login">FAZER LOGIN</ButtonBlack>
+                        <ButtonBlack width='35ch' href="/login">FAZER LOGIN</ButtonBlack>
                     </div>
                     <div>
                         <p className="text-[#ffffff] my-1">OU</p>
-                        <ButtonGreen width= '35ch' href="#">COMEÇAR SEM LOGIN</ButtonGreen>
+                        <ButtonGreen width='35ch' href="/register">CADASTRAR-SE</ButtonGreen>
                     </div>
                 </Box>
             </div>

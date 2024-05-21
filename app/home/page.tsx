@@ -12,16 +12,15 @@ const SelectorContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 40px 0 10px 0;
+  margin: 100px 0 10px 0;
 `;
 
 const SelectorItem = styled.div<{ isActive: boolean }>`
   margin: 0 15px;
-  padding: 10px 15px;
+  padding: 10px 10px;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: ${props => (props.isActive ? 'bold' : 'normal')};
-  border-bottom: ${props => (props.isActive ? '2px solid black' : 'none')};
   position: relative;
 `;
 
@@ -31,7 +30,7 @@ const SelectorDot = styled.div`
   background-color: black;
   border-radius: 50%;
   position: absolute;
-  bottom: -6px;
+  bottom: -1px;
   left: 50%;
   transform: translateX(-50%);
 `;
@@ -47,10 +46,10 @@ const Home: React.FC = () => {
       '/images/parque-carlos-botelho.jpg',
     ],
     titles: [
-      'IMAGEM DE PARQUE 1', 
-      'IMAGEM DE PARQUE 2', 
-      'IMAGEM DE PARQUE 3', 
-      'IMAGEM DE PARQUE 4', 
+      'IMAGEM DE PARQUE 1',
+      'IMAGEM DE PARQUE 2',
+      'IMAGEM DE PARQUE 3',
+      'IMAGEM DE PARQUE 4',
     ],
   };
 
@@ -72,23 +71,23 @@ const Home: React.FC = () => {
       <div className='content' style={{ padding: '20px' }}>
         <SearchComponent title='' />
         <SelectorContainer>
-        <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
-          Parques
-          {selected === 'Parques' && <SelectorDot />}
-        </SelectorItem>
-        <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
-          Eventos
-          {selected === 'Eventos' && <SelectorDot />}
-        </SelectorItem>
-      </SelectorContainer>
-      <CarouselImages
-        images={selectedData.images}
-        titles={selectedData.titles}
-        imageWidth={200}
-        imageHeight={400}
-        borderRadius={30}
-        imageSpacing={20}
-      />
+          <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
+            Parques
+            {selected === 'Parques' && <SelectorDot />}
+          </SelectorItem>
+          <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
+            Eventos
+            {selected === 'Eventos' && <SelectorDot />}
+          </SelectorItem>
+        </SelectorContainer>
+        <CarouselImages
+          images={selectedData.images}
+          titles={selectedData.titles}
+          imageWidth={200}
+          imageHeight={400}
+          borderRadius={30}
+          imageSpacing={20}
+        />
       </div>
       <FooterMenu activePage="home" />
     </div>
