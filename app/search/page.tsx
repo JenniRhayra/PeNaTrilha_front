@@ -5,11 +5,11 @@ import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import SearchComponent from '../components/searchComponent';
 import {Autocomplete, AutocompleteItem} from "@nextui-org/autocomplete";
-import Image from 'next/image';
 import { useState } from 'react';
 import Card from '../components/cardComponent';
 import LocationComponent from '../components/locationComponent';
-import Grid from "@nextui-org/react"
+import Image from 'next/image';
+
 
 //Essa info vai vir da consulta do backend
 const parks = [
@@ -104,7 +104,7 @@ const Search: React.FC = () => {
                   //startContent={<PetIcon className="text-xl" />}
                   className="max-w-xs"
                 >
-                  {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
+                  {(item: any) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
               </Autocomplete>
           </div>
           )}
