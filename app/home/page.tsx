@@ -12,11 +12,7 @@ const SelectorContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-<<<<<<< HEAD
   margin: 100px 0 10px 0;
-=======
-  margin: 70px 0 10px 0;
->>>>>>> 48d24df25711ea87fe67f8d97448f6f98d6cbf2f
 `;
 
 const SelectorItem = styled.div<{ isActive: boolean }>`
