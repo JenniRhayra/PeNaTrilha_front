@@ -70,8 +70,12 @@ const Search: React.FC = () => {
 
   const [isDivVisible, setIsDivVisible] = useState(false);
 
-  const handleImageClick = () => {
+  const handleFilterClick = () => {
     setIsDivVisible(!isDivVisible);
+  };
+
+  const handleSortClick = () => {
+    
   };
 
   return (
@@ -85,15 +89,32 @@ const Search: React.FC = () => {
         <br></br>
       </div>
       
-      <div style={{ marginTop: '9rem', padding: '16px'}}>
-          <Image
-             src="/images/filtro.png"
-             alt="filtro"
-             width={25}
-             height={25} 
-             onClick={handleImageClick} 
-          
-          />
+      <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4 mt-36 px-4">
+        <div className="flex w-full justify-between">
+            <div>
+              <Image id='filtro'
+                src="/images/filtro.png"
+                alt="filtro"
+                width={25}
+                height={25} 
+                onClick={handleFilterClick} 
+              
+              />
+              <label htmlFor="filtro" className='block'> Filtrar </label>
+            </div>
+            
+            <div className="md:self-end">
+              <Image id='ordenar'
+                src="/images/sort.png"
+                alt="ordenar"
+                width={25}
+                height={25} 
+                onClick={handleSortClick} 
+              /> 
+              <label htmlFor="ordenar" className='block'> Ordenar</label>
+            </div>
+        </div>
+
           {isDivVisible && (
           <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
               <Autocomplete
@@ -111,13 +132,12 @@ const Search: React.FC = () => {
           
           {parks.map((park, index) => (
           <div key={index}>
-            <Card
+            <Card 
               title={park.title}
               image={park.image}
               description={park.description}
               link = {park.link}
             />
-            <br></br>
           </div>
         ))}
       </div>
