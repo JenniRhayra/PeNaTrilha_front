@@ -1,7 +1,13 @@
 import { useState, useEffect } from 'react';
 import MapComponent from './mapComponent';
+import { FaLocationDot } from "react-icons/fa6";
 
-const LocationComponent: React.FC = () => {
+
+interface LocationComponentProps {
+  showMap?: boolean;
+}
+
+const LocationComponent: React.FC<LocationComponentProps> = ({ showMap = true }) => {
   const [location, setLocation] = useState<GeolocationPosition | null>(null);
   const [address, setAddress] = useState<string | null>(null);
 
@@ -30,20 +36,27 @@ const LocationComponent: React.FC = () => {
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
       const data = await response.json();
-      setAddress(`${data.address.city}, ${data.address.state}`);
+      setAddress(`${data.address.city}/ ${data.address.state}`);
     } catch (error) {
       console.error('Error getting address:', error);
     }
   };
 
   return (
-    <div>
+    <div style={{textAlign:'center'}}>
       {!location ? (
-        <button onClick={getLocation}>Localização</button>
+        <button onClick={getLocation}>Clique aqui para definir sua localização atual</button>
       ) : (
         <div>
-          {address && <div>{address}</div>}
-          <MapComponent latitude={location.coords.latitude} longitude={location.coords.longitude} />
+          {address && (
+            <div style={{ display: 'inline-flex', alignItems: 'center', color:'#C1C1C1' }}>
+              <FaLocationDot style={{ marginRight: '5px' }} />
+              <div>{address}</div>
+            </div>
+          )}
+          {showMap && location && (
+            <MapComponent latitude={location.coords.latitude} longitude={location.coords.longitude} />
+          )}
         </div>
       )}
     </div>

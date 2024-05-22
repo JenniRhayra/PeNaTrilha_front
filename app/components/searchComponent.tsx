@@ -1,8 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiSearch } from 'react-icons/fi';
-import { IoIosArrowDown } from "react-icons/io";
-import { FaLocationDot } from "react-icons/fa6";
 
 interface SearchComponentProps {
   title: string; // Adicione a propriedade de título
@@ -10,10 +8,6 @@ interface SearchComponentProps {
 
 const SearchComponent: React.FC<SearchComponentProps> = ({ title }) => {
   const router = useRouter();
-
-  const handleChangeLocation = () => {
-    // Implementar lógica para mudar a localização
-  };
 
   // Função para lidar com a pesquisa
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,23 +27,6 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ title }) => {
       margin: '0 auto', // Centralizar horizontalmente
       padding: '0 15px' // Adicionar margem fixa à esquerda e à direita
     }}>
-      {/* Localização atual */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <FaLocationDot style={{ color: '#667358' }}/>
-          <span style={{ marginLeft: '10px' }}>Localização Atual</span>
-        </div>
-        <button 
-          onClick={handleChangeLocation} 
-          style={{ 
-            marginLeft: '10px',
-            backgroundColor: 'transparent',
-            border: 'none',
-            cursor: 'pointer'
-          }}>
-          <IoIosArrowDown />
-        </button>
-      </div>
   
       {/* Campo de busca */}
       <div style={{ position: 'relative', marginTop: '10px'}}>

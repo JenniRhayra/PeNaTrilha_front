@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
-import { FaLocationDot } from "react-icons/fa6";
 
 interface PageHeaderProps {
   backgroundImageUrl: string;
@@ -117,7 +116,6 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       {/* Retângulo arredondado */}
       <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1 }}>
         {/* Conteúdo dentro do retângulo */}
-        <FaLocationDot size={25} color="black" />
         {children}
       </div>
     </div>
