@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 // These styles apply to every route in the application
-import './globals.css'
+import './globals.css';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 export const metadata: Metadata = {

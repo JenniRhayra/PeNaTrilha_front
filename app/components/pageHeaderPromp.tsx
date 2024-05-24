@@ -7,7 +7,7 @@ interface PageHeaderProps {
   backgroundImageUrl: string;
   title: string;
   children: React.ReactNode;
-  showCheck?: boolean; // Propriedade opcional para determinar se o componente de check deve ser exibido
+  showCheck?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, children, showCheck = false }) => {
