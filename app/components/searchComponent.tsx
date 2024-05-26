@@ -1,18 +1,22 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiSearch } from 'react-icons/fi';
+import { Button } from '@nextui-org/react';
 
 interface SearchComponentProps {
-  title: string; // Adicione a propriedade de título
+  title: string, // Adicione a propriedade de título
+  filterTerm: string | undefined
 }
 
-const SearchComponent: React.FC<SearchComponentProps> = ({ title }) => {
+const SearchComponent: React.FC<SearchComponentProps> = ({ title, filterTerm }) => {
   const router = useRouter();
 
   // Função para lidar com a pesquisa
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const term = event.target.value;
+  const handleSearch = () => {
     // Implemente a lógica para buscar o termo na página
+    
+        console.log(filterTerm);
+    
   };
 
   return (
