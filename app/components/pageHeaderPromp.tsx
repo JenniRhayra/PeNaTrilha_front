@@ -33,7 +33,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       <div
         style={{
           width: '100%',
-          height: '40vh', // Ajustado para 40% da altura da tela
+          height: '40vh',
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -114,7 +114,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       )}
 
       {/* Retângulo arredondado */}
-      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1 }}>
+      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px 30px 60px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1, overflow:'auto'}}>
         {/* Conteúdo dentro do retângulo */}
         {children}
       </div>
