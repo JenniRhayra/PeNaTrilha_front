@@ -67,17 +67,27 @@ export default function Login() {
     }
 
     return (
-        <main className="flex flex-col items-center justify-center h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-12 py-4">
-            <div className='relative right-52 bottom-28'>
-                <ButtonBack />
-            </div>
-            <div className='relative bottom-36 col-span-12 lg:col-span-5 grid place-items-center'>
+        <main className="flex flex-col h-screen min-h-screen bg-[#FFFFFF] container mx-auto px-0 py-4">
+            <div className='absolute sm:w-30 sm:h-30 w-50 h-50 lg:w-70 lg:h-70 top-0 right-0'>
                 <Image
-                    src="/images/penatrilha_logo_w.png"
-                    alt="logo pe na trilha"
-                    width={400}
-                    height={400}
+                    src="/images/img_abs_01.png"
+                    alt="forma abstrata direita"
+                    width={200}
+                    height={200}
                 />
+            </div>
+            <div>
+                <ButtonBack/>
+            </div>
+            <div className='items-center justify-center '>
+                <div className='col-span-12 lg:col-span-5 grid place-items-center px-10'>
+                    <Image
+                        src="/images/penatrilha_logo_w.png" 
+                        alt="logo pe na trilha"
+                        width={400}
+                        height={400}
+                    />
+                </div>
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
                 <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Login</h1>
