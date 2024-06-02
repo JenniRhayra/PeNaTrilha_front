@@ -2,7 +2,6 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
-import zIndex from '@mui/material/styles/zIndex';
 
 const Header: React.FC = () => {
 
