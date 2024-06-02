@@ -4,12 +4,13 @@ import React from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import SearchComponent from '../components/searchComponent';
-import {Autocomplete, AutocompleteItem} from "@nextui-org/autocomplete";
+import { Autocomplete, AutocompleteItem } from "@nextui-org/autocomplete";
 import Image from 'next/image';
 import { useState } from 'react';
 import Card from '../components/cardComponent';
 import LocationComponent from '../components/locationComponent';
 import Grid from "@nextui-org/react"
+import GoogleMaps from '../google_maps/page';
 
 //Essa info vai vir da consulta do backend
 const parks = [
@@ -77,52 +78,52 @@ const Search: React.FC = () => {
   return (
     <>
       <div>
-        <Header></Header>
+        <Header />
       </div>
-      <div style={{ marginTop: '0.5rem', padding: '16px'}}>
-        <LocationComponent></LocationComponent>
-        <SearchComponent title=''></SearchComponent>
-        <br></br>
+      <div style={{ marginTop: '0.5rem', padding: '16px' }}>
+        <LocationComponent />
+        <SearchComponent title='' />
+        <br />
       </div>
-      
-      <div style={{ marginTop: '9rem', padding: '16px'}}>
-          <Image
-             src="/images/filtro.png"
-             alt="filtro"
-             width={25}
-             height={25} 
-             onClick={handleImageClick} 
-          
-          />
-          {isDivVisible && (
+      <GoogleMaps />
+      <div style={{ marginTop: '9rem', padding: '16px' }}>
+        <Image
+          src="/images/filtro.png"
+          alt="filtro"
+          width={25}
+          height={25}
+          onClick={handleImageClick}
+
+        />
+        {isDivVisible && (
           <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
-              <Autocomplete
-                  //label="Favorite Animal"
-                  placeholder="Escolha um filtro"
-                  variant="bordered"
-                  defaultItems={items}
-                  //startContent={<PetIcon className="text-xl" />}
-                  className="max-w-xs"
-                >
-                  {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
+            <Autocomplete
+              //label="Favorite Animal"
+              placeholder="Escolha um filtro"
+              variant="bordered"
+              defaultItems={items}
+              //startContent={<PetIcon className="text-xl" />}
+              className="max-w-xs"
+            >
+              {(item) => <AutocompleteItem key={item.key}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
           </div>
-          )}
-          
-          {parks.map((park, index) => (
+        )}
+
+        {parks.map((park, index) => (
           <div key={index}>
             <Card
               title={park.title}
               image={park.image}
               description={park.description}
-              link = {park.link}
+              link={park.link}
             />
             <br></br>
           </div>
         ))}
       </div>
       <FooterMenu activePage='search'></FooterMenu>
-      
+
     </>
   );
 };
