@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';

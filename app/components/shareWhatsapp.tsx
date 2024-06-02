@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 const ShareOnWhatsApp = ({ text }: { text: string }) => {
@@ -8,7 +8,7 @@ const ShareOnWhatsApp = ({ text }: { text: string }) => {
     const shareText = encodeURIComponent(text);
     const whatsappUrl = `https://api.whatsapp.com/send?text=${shareText}`;
     router.push(whatsappUrl);
-  }, []);
+  }, [text, router]);
 
   return null; // Este componente não renderiza nada, pois redirecionamos diretamente para o link do WhatsApp
 };
