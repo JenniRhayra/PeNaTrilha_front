@@ -46,7 +46,7 @@ export default function Success_Register(){
                     </div>
                     <div>
                         <p className="text-[#C1C1C1]">ou</p>
-                        <Link href="#">COMEÇAR A EXPLORAR</Link>
+                        <Link href="../home">COMEÇAR A EXPLORAR</Link>
                     </div>
                 </Box>
             </div>

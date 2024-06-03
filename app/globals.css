@@ -78,3 +78,9 @@ body {
 .content {
     margin-top: 70px; /* Ajuste a margem superior para ser igual à altura do cabeçalho */
 } 
+
+.subtitles_content {
+    font-weight: bold;
+    color: #8A8A8A;
+    margin-top: 20px;
+}

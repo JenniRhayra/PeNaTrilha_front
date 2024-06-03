@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import Image from 'next/image';
 import React, { useState } from 'react';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';
@@ -5,6 +7,7 @@ import styled from 'styled-components';
 interface CarouselProps {
   images: string[];
   titles: string[];
+  links: string[]
   imageWidth: number;
   imageHeight: number;
   borderRadius: number;
@@ -34,6 +37,26 @@ const ImageWrapper = styled.div<{ imageWidth: number; imageHeight: number; image
     height: ${props => props.imageHeight}px;
     border-radius: ${props => props.borderRadius}px;
     object-fit: cover;
+    transition: filter 0.3s ease;
+  }
+
+  &:hover img {
+    filter: brightness(60%);
+  }
+
+  .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover .overlay {
+    opacity: 1;
   }
 `;
 
@@ -47,7 +70,7 @@ const ImageTitle = styled.div`
   max-width: calc(100% - 20px);
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: break-word;
   font-weight: bold;
 `;
 
@@ -68,7 +91,7 @@ const ArrowButton = styled.button<{ left?: boolean }>`
   z-index: 1;
 `;
 
-const CarouselImages: React.FC<CarouselProps> = ({ images, titles, imageWidth, imageHeight, borderRadius, imageSpacing }) => {
+const CarouselImages: React.FC<CarouselProps> = ({ images, titles, links, imageWidth, imageHeight, borderRadius, imageSpacing }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchX, setTouchX] = useState<number | null>(null);
 
@@ -114,7 +137,9 @@ const CarouselImages: React.FC<CarouselProps> = ({ images, titles, imageWidth, i
       <ImageList translateX={-currentIndex * (imageWidth + imageSpacing)}>
         {images.map((src, index) => (
           <ImageWrapper key={index} imageWidth={imageWidth} imageHeight={imageHeight} imageSpacing={imageSpacing} borderRadius={borderRadius}>
-            <img src={src} alt={`Image ${index + 1}`} />
+            <Link href={links[index]}>
+              <img src={src} alt={`Image ${index + 1}`}/>
+            </Link>
             <ImageTitle>{titles[index]}</ImageTitle>
           </ImageWrapper>
         ))}

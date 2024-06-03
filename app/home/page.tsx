@@ -4,15 +4,15 @@ import React, { useState } from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import CarouselImages from '../components/carroselImages';
-import SearchComponent from '../components/searchComponent';
 import styled from 'styled-components';
 import '../globals.css';
+import LocationComponent from '../components/locationComponent';
 
 const SelectorContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 100px 0 10px 0;
+  margin: 10px 0 10px 0;
 `;
 
 const SelectorItem = styled.div<{ isActive: boolean }>`
@@ -22,18 +22,18 @@ const SelectorItem = styled.div<{ isActive: boolean }>`
   font-size: 15px;
   font-weight: ${props => (props.isActive ? 'bold' : 'normal')};
   position: relative;
+  color: ${props => (props.isActive ? '#4D5D47' : '#A6A6A6')}
 `;
 
 const SelectorDot = styled.div`
   width: 8px;
   height: 8px;
-  background-color: black;
+  background-color: #4D5D47;
   border-radius: 50%;
   position: absolute;
   bottom: -1px;
   left: 50%;
-  transform: translateX(-50%);
-`;
+  transform: translateX(-50%);`;
 
 const Home: React.FC = () => {
   const [selected, setSelected] = useState<'Parques' | 'Eventos'>('Parques');
@@ -41,26 +41,33 @@ const Home: React.FC = () => {
   const parquesData = {
     images: [
       '/images/parque-carlos-botelho.jpg',
-      '/images/parque-carlos-botelho.jpg',
-      '/images/parque-carlos-botelho.jpg',
+      '/images/intervales.jpg',
+      '/images/parque-iguacu.jpg',
       '/images/parque-carlos-botelho.jpg',
     ],
     titles: [
-      'IMAGEM DE PARQUE 1',
-      'IMAGEM DE PARQUE 2',
-      'IMAGEM DE PARQUE 3',
+      'PE CARLOS BOTELHO',
+      'PE INTERVALES',
+      'PE IGUAÇU',
       'IMAGEM DE PARQUE 4',
     ],
+    links:[
+      '/content_pages',
+      '',
+      '',
+      ''
+    ]
   };
 
   const eventosData = {
     images: [
-      '/images/evento1.jpg',
-      '/images/evento2.jpg',
-      '/images/evento3.jpg',
-      '/images/evento4.jpg',
+      '/images/at01.jpeg',
+      '/images/pei_at_01.jpeg',
+      '/images/pei_at_02.jpeg',
+      '/images/pei_at_03.jpg',
     ],
-    titles: ['Evento 1', 'Evento 2', 'Evento 3', 'Evento 4'],
+    titles: ['UM DIA NO PARQUE 2024', 'EVENTO 2', 'EVENTO 3', 'EVENTO 4'],
+    links: ['','','','']
   };
 
   const selectedData = selected === 'Parques' ? parquesData : eventosData;
@@ -69,26 +76,33 @@ const Home: React.FC = () => {
     <div>
       <Header />
       <div className='content' style={{ padding: '20px' }}>
-        <SearchComponent title='' />
+        <h1 style={{textAlign: 'center', fontWeight: 'bold', color: '#7D9662', fontSize:'20px'}}>BORA COMEÇAR?</h1>
+        
+        <div style={{alignItems: 'center'}}>
+          <LocationComponent showMap={false}/>
+        </div>
+        
         <SelectorContainer>
           <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
-            Parques
+            PARQUES
             {selected === 'Parques' && <SelectorDot />}
           </SelectorItem>
           <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
-            Eventos
+            EVENTOS
             {selected === 'Eventos' && <SelectorDot />}
           </SelectorItem>
         </SelectorContainer>
         <CarouselImages
           images={selectedData.images}
           titles={selectedData.titles}
+          links={selectedData.links}
           imageWidth={200}
-          imageHeight={400}
+          imageHeight={350}
           borderRadius={30}
           imageSpacing={20}
         />
       </div>
+      <div style={{paddingBottom: '50px'}}></div>
       <FooterMenu activePage="home" />
     </div>
   );
