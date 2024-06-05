@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-import { List, ListItem, ListItemText, ListItemAvatar, Avatar, Typography } from '@mui/material';
+import { FiArrowLeft, FiArrowRight, FiEye, FiEdit, FiTrash } from 'react-icons/fi';
+import { List, ListItem, ListItemText, ListItemAvatar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -20,12 +20,15 @@ interface ProfileListProps {
   type: Profile[];
   layout: 'column' | 'row';
   showCheckIcon?: boolean;
+  showCRUDIcons?: boolean; // Novo parâmetro
 }
 
-const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }) => {
+const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, showCRUDIcons }) => {
   const [scrollX, setScrollX] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
 
   const handleScroll = (direction: 'right' | 'left') => {
     const container = document.getElementById('guide-list-container');
@@ -35,18 +38,46 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
       if (direction === 'right') {
         const newScrollX = Math.min(scrollX + step, maxScroll);
         setScrollX(newScrollX);
-        setShowLeftArrow(true); // Always show left arrow when scrolling
+        setShowLeftArrow(true);
         if (newScrollX >= maxScroll) {
-          setShowRightArrow(false); // Hide right arrow if no more content to scroll right
+          setShowRightArrow(false);
         }
       } else {
         const newScrollX = Math.max(scrollX - step, 0);
         setScrollX(newScrollX);
-        setShowRightArrow(true); // Always show right arrow when scrolling
+        setShowRightArrow(true);
         if (newScrollX === 0) {
-          setShowLeftArrow(false); // Hide left arrow if no more content to scroll left
+          setShowLeftArrow(false);
         }
       }
+    }
+  };
+
+  const handleView = (profile: Profile) => {
+    // Implemente a lógica para VISUALIZAR o perfil
+    console.log("Visualizando perfil:", profile.name);
+  };
+
+  const handleEdit = (profile: Profile) => {
+    // Implemente a lógica para EDITAR o perfil
+    console.log("Editando perfil:", profile.name);
+  };
+
+  const handleDelete = (profile: Profile) => {
+    setSelectedProfile(profile);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleConfirmDelete = () => {
+    // Implemente a lógica para EXCLUIR o perfil
+    if (selectedProfile) {
+      console.log("Excluindo perfil:", selectedProfile.name);
+      // Adicione aqui a lógica de exclusão
+      setOpenDeleteDialog(false);
     }
   };
 
@@ -117,7 +148,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
             display: 'flex', 
             flexDirection: layout === 'column' ? 'column' : 'row', 
             justifyContent: 'left', 
-            padding: layout === 'column' ? '215px 20px 60px 20px' : '0', 
+            padding: layout === 'column' ? '30px 20px 60px 20px' : '0', 
             margin: '0', 
             scrollBehavior: 'smooth', 
             transform: `translateX(-${scrollX}px)` }}>
@@ -173,6 +204,13 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
                 }
                 style={{ paddingLeft: '20px' }}
               />
+              {showCRUDIcons && (
+                <>
+                  <FiEye onClick={() => handleView(profile)} style={{ cursor: 'pointer', marginRight: '5px' }} />
+                  <FiEdit onClick={() => handleEdit(profile)} style={{ cursor: 'pointer', marginRight: '5px' }} />
+                  <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} />
+                </>
+              )}
             </ListItemStyled>
           ))}
         </List>
@@ -188,6 +226,22 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
           </ArrowButton>
         </div>
       )}
+
+      {/* Diálogo de confirmação de exclusão */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirmação de Exclusão</DialogTitle>
+        <DialogContent>
+          Tem certeza que deseja excluir o perfil de {selectedProfile?.name}?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Não
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary">
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
