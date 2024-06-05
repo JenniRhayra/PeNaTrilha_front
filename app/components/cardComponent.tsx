@@ -11,9 +11,10 @@ interface ProfileCardProps {
   description: string;
   link: string;
   distancia: string;
+  chipIsVisible: boolean;
 }
 
-const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia }) => {
+const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia, chipIsVisible }) => {
   return (
     <Card className="max-w-[400px]" style={{marginRight: '1em', height: '10em', marginBottom: '1em'}}>
       <CardHeader className="flex gap-3">
@@ -27,10 +28,11 @@ const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, 
         <div className="flex flex-col">
           <p className="text-md">{title}</p>
         </div>
+        {chipIsVisible && (
         <div style={{ marginRight: '5px' }}>
           <Chip size="sm" style={{ color: 'white', backgroundColor: '#667358' }}> {distancia} </Chip>
         </div>
-
+        )}
       </CardHeader>
       <Divider />
       <CardBody>
@@ -38,13 +40,11 @@ const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, 
 
       </CardBody>
       <Divider />
-      <CardFooter className="justify-center">
-        <Link 
-          isExternal
-          showAnchorIcon
+      <CardFooter className="justify-end" style={{paddingRight:'1rem'}}>
+        <Link style={{color:'#7D9662', fontWeight:'500', textDecoration:'underline'}}
           href={link}
         >
-          Ver mais
+          Ver perfil
         </Link>
       </CardFooter>
     </Card>
