@@ -3,7 +3,10 @@ import { Divider } from "@nextui-org/divider";
 import { Link } from "@nextui-org/link";
 import { Image } from "@nextui-org/image";
 import { Chip } from "@nextui-org/react";
-import styled from 'styled-components';
+import { Button } from "@mui/material";
+import React, { useState } from 'react';
+import MapComponent from './mapComponent';
+
 
 interface ProfileCardProps {
   title: string;
@@ -12,11 +15,23 @@ interface ProfileCardProps {
   link: string;
   distancia: string;
   chipIsVisible: boolean;
+  pinIsVisible: boolean;
+  lat: number;
+  long: number;
 }
 
-const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia, chipIsVisible }) => {
+
+const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia, chipIsVisible, pinIsVisible, lat, long }) => {
+  const [src, setSrc] = useState('defaultPin.png');
+  
+
+  const handlePinClick = () => {
+    setSrc(prevSrc => (prevSrc === 'defaultPin.png' ? 'selectedPin.png' : 'defaultPin.png'));
+    
+  }
+
   return (
-    <Card className="max-w-[400px]" style={{marginRight: '1em', height: '10em', marginBottom: '1em'}}>
+    <Card className="max-w-[400px]" style={{marginRight: '1em', height: '11em', marginBottom: '1em'}}>
       <CardHeader className="flex gap-3">
         <Image
           alt={title}
@@ -32,6 +47,13 @@ const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, 
         <div style={{ marginRight: '5px' }}>
           <Chip size="sm" style={{ color: 'white', backgroundColor: '#667358' }}> {distancia} </Chip>
         </div>
+        )}
+        {pinIsVisible && (
+          <div style={{marginBottom:'2rem', marginLeft: '2rem'}} >
+            <Button id='btnPin' onClick={handlePinClick}>
+              <Image src={`/images/${src}`} alt="pin" width={24} height={24} className="cursor-pointer"/>
+            </Button>
+          </div>
         )}
       </CardHeader>
       <Divider />
