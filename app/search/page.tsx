@@ -20,49 +20,65 @@ const parksList = [
     title: 'Parque A',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque C',
     image: '/images/parque-carlos-botelho.jpg', // Substitua pelo caminho real da imagem
     description: 'Conhecido por suas paisagens de cerrado, cachoeiras e trilhas deslumbrantes.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque B',
     image: '/images/parque-carlos-botelho.jpg', // Substitua pelo caminho real da imagem
     description: 'Popular por suas dunas, lagoas cristalinas e praias paradisíacas.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque D',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque F',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque E',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque H',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   },
   {
     title: 'Parque G',
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
-    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches'
+    link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
+    lat:  -24.056113238506416,
+    long: -47.99360184042935
   }
 ];
 
@@ -86,14 +102,13 @@ const Search: React.FC = () => {
   const sortOptions = [
     'A-Z',
     'Z-A',
-    'Mais próximos'
   ];
  
   const [isDivFilterVisible, setDivFilterVisible] = useState(false);
   const [sliderValue, setSliderValue] = React.useState<number>(5);
   const [filterValue, setSelectedFilter] = React.useState<React.Key>("p");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [selectedSortIndex, setSelectedIndex] = React.useState(0);
+  const [selectedSortIndex, setSelectedIndex] = React.useState(2);
   const [parks, setParks] = useState<any[]>(parksList);
 
   const open = Boolean(anchorEl);
@@ -106,17 +121,17 @@ const Search: React.FC = () => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleOrderOfResults = () => {
-    switch(selectedSortIndex){
+  const handleOrderOfResults = (index: number) => {
+    switch(index){
       //A-Z
       case 0:
-        setParks(sortAlphabetically(parksList));
-        console.log(parks);
+        setParks(sortAlphabetically());
+        console.log('case 0' + parks);
         break;
       //Z-A
       case 1:
-        setParks(sortAlphabeticallyDesc(parksList));
-        console.log(parks);
+        setParks(sortAlphabeticallyDesc());
+        console.log('case 1' + parks);
         break;
       //Mais próximos
       case 2:
@@ -125,11 +140,13 @@ const Search: React.FC = () => {
     }
   }
 
-  const sortAlphabetically = (p: any): any => {
+  const sortAlphabetically = () => {
+    
     return parksList.slice().sort((a, b) => a.title.localeCompare(b.title));
   }
 
-  const sortAlphabeticallyDesc = (p: any): any => {
+  const sortAlphabeticallyDesc = () => {
+    
     return parksList.slice().sort((a, b) => b.title.localeCompare(a.title));
   }
 
@@ -137,9 +154,10 @@ const Search: React.FC = () => {
     event: React.MouseEvent<HTMLElement>,
     index: number,
   ) => {
+    console.log(index);
     setSelectedIndex(index);
-    setAnchorEl(null);
-    handleOrderOfResults();
+    handleOrderOfResults(index);
+    setAnchorEl(null);  
   };
 
   const handleCloseSort = () => {
@@ -150,6 +168,44 @@ const Search: React.FC = () => {
     setSliderValue(newValue as number);
   };
 
+  const handleSearchTitle = (): string => {
+    let title: string = '';
+    
+    switch(filterValue){
+      case "p":
+        title = "Parques";
+        break;
+      case "g":
+        title = "Guias";
+        break;
+      case "a":
+        title = "Atividades";
+        break;
+    }
+
+    return title;
+   
+  }
+
+  const handleSortItems = (): string[] => {
+    let sortListFiltered: string[];
+    let qtOptions = sortOptions.length;
+
+    sortListFiltered = sortOptions;
+
+    if(filterValue == 'p'){
+      sortOptions.push('Mais próximos');
+      sortListFiltered = sortOptions;
+    }
+
+    if(qtOptions == 3 && filterValue != 'p'){
+      sortOptions.pop();
+      sortListFiltered = sortOptions;
+    }
+   
+    return sortListFiltered;
+  }
+
   return (
     <>
       <div>
@@ -158,13 +214,13 @@ const Search: React.FC = () => {
       
       <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
         
-        <SearchComponent title='' filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
+        <SearchComponent title={handleSearchTitle()} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
         <br></br>
       </div>
 
       {filterValue?.toString() == 'p' &&(
           <div>
-            <LocationComponent showMap={false}></LocationComponent>  
+            <LocationComponent showMap={true}></LocationComponent>  
           </div>  
       )}
       <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 gap-4 mt-36 px-4">
@@ -203,11 +259,12 @@ const Search: React.FC = () => {
                 role: 'listbox',
               }}
             >
-              {sortOptions.map((option, index) => (
+              {handleSortItems().map((option, index) => (
                 <MenuItem
                   key={option}
+                  onClick={(event) => handleSortItemClick(event, index)}             
                   selected={index === selectedSortIndex}
-                  onClick={(event) => handleSortItemClick(event, index)}
+                  
                 >
                   {option}
                 </MenuItem>
@@ -247,7 +304,7 @@ const Search: React.FC = () => {
         )}
 
         <div id='cardsConteiner' className='w-full flex flex-wrap justify-center' style={{paddingLeft:'inherit', paddingBottom:'3rem'}}>
-          {parks.map((park, index) => (
+          {parks?.map((park, index) => (
             <div key={index}>
               <Card
                 title={park.title}
@@ -256,6 +313,7 @@ const Search: React.FC = () => {
                 link={park.link}
                 distancia={'3.6KM'}
                 chipIsVisible = {filterValue?.toString() == 'p' ? true : false}
+                pinIsVisible = {filterValue?.toString() == 'p' ? true : false}
 
               />
             </div>
