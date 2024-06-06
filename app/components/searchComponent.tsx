@@ -1,6 +1,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiSearch } from 'react-icons/fi';
+import Image from 'next/image';
 import { Button } from '@nextui-org/react';
 import ButtonGreen from './buttonGreen';
 
@@ -48,6 +49,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ title, filterTerm }) 
             
             
         }} />
+        
         <div style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)' }}>
           <FiSearch />
         </div>

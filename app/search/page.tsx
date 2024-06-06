@@ -7,14 +7,17 @@ import SearchComponent from '../components/searchComponent';
 import { Autocomplete, AutocompleteItem} from "@nextui-org/react";
 import { useState } from 'react';
 import Card from '../components/cardComponent';
-import LocationComponent from '../components/locationComponent';
 import Image from 'next/image';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import Grid from "@nextui-org/react"
 import GoogleMaps from '../google_maps/page';
+import ListItemText from '@mui/material/ListItemText';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Checkbox from '@mui/material/Checkbox';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
 
 //Essa info vai vir da consulta do backend
 const parksList = [
@@ -105,6 +108,12 @@ const Search: React.FC = () => {
     'A-Z',
     'Z-A',
   ];
+
+  const guideIdiomas = [
+    'Português',
+    'Inglês',
+    'Francês',  
+  ];
  
   const [isDivFilterVisible, setDivFilterVisible] = useState(false);
   const [sliderValue, setSliderValue] = React.useState<number>(5);
@@ -112,7 +121,8 @@ const Search: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedSortIndex, setSelectedIndex] = React.useState(2);
   const [parks, setParks] = useState<any[]>(parksList);
-
+  const [iconMapClicked, setMapClicked] = useState(false);
+  
   const open = Boolean(anchorEl);
 
   const handleFilterClick = () => {
@@ -208,26 +218,68 @@ const Search: React.FC = () => {
     return sortListFiltered;
   }
 
+  const handleIconMapClick = () => {
+    setMapClicked(!iconMapClicked);
+  }
+
+  const [personName, setPersonName] = React.useState<string[]>([]);
+  
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
+
+  const handleCheckBoxChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
   return (
     <>
       <div>
         <Header />
       </div>
-      
-      <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
-        
-        <SearchComponent title={handleSearchTitle()} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
-        <br></br>
-      </div>
 
-      {filterValue?.toString() == 'p' &&(
-          <div>
-            <LocationComponent showMap={true}></LocationComponent>  
-          </div>  
-      )}
+      <div id='main'>
+        <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
+          <SearchComponent title={handleSearchTitle()} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
+        </div>
+
+        {filterValue?.toString() == 'p' &&(
+            <div id='divLocationMapa' style={{position: 'relative', marginTop:'8rem', marginLeft:'70%'}}>
+                <Image id='mapaIcon'
+                  src="/images/mapa.png"
+                  alt="ícone mapa"
+                  width={35}
+                  onClick={handleIconMapClick}
+                  height={35}
+                  className='cursor-pointer' />
+                
+            </div>        
+        )}
+      </div>
       <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 gap-4 mt-36 px-4">
-        <div className="flex w-full justify-between">
-          <GoogleMaps />
+
+        {filterValue?.toString() == 'p' && iconMapClicked && (
+          <div id='paiGoogle' style={{width:'100%'}}>
+            <div id='divGoogleMaps'>
+            <GoogleMaps />
+            </div>
+          </div>  
+        )}
+        
+        <div className="flex w-full justify-between" style={{marginTop:'4rem'}}>  
           <div>
             <Image id='filtro'
               src="/images/filtro.png"
@@ -302,7 +354,30 @@ const Search: React.FC = () => {
                   </Stack>
                   
                 </div>
-              )}    
+              )}  
+
+              {filterValue?.toString() == 'g' &&(
+                <div>
+                  <InputLabel id="demo-multiple-checkbox-label">Idiomas</InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={personName}
+                    onChange={handleCheckBoxChange}
+                    input={<OutlinedInput label="Tag" />}
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                  >
+                    {guideIdiomas.map((name) => (
+                      <MenuItem key={name} value={name}>
+                        <Checkbox checked={personName.indexOf(name) > -1} />
+                        <ListItemText primary={name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </div>
+              )}  
           </div> 
         )}
 
@@ -316,8 +391,7 @@ const Search: React.FC = () => {
                 link={park.link}
                 distancia={'3.6KM'}
                 chipIsVisible = {filterValue?.toString() == 'p' ? true : false}
-                pinIsVisible = {filterValue?.toString() == 'p' ? true : false}
-
+                pinIsVisible = {filterValue?.toString() == 'p' ? true : false} 
               />
             </div>
           ))}

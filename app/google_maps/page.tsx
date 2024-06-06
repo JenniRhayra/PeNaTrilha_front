@@ -78,7 +78,7 @@ const GoogleMaps: NextPage = () => {
                 zoom={14}
                 center={mapCenter}
                 mapTypeId={google.maps.MapTypeId.ROADMAP}
-                mapContainerStyle={{ width: '400px', height: '400px' }}
+                mapContainerStyle={{ width: '100%', height: '400px' }}
                 onLoad={(map) => console.log('Map Loaded')}
             >
                 <MarkerF
