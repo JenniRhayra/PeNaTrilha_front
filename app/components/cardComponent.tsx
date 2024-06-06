@@ -15,13 +15,11 @@ interface ProfileCardProps {
   link: string;
   distancia: string;
   chipIsVisible: boolean;
-  pinIsVisible: boolean;
-  lat: number;
-  long: number;
+  pinIsVisible: boolean;  
 }
 
 
-const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia, chipIsVisible, pinIsVisible, lat, long }) => {
+const CardComponent: React.FC<ProfileCardProps> = ({ title, image, description, link, distancia, chipIsVisible, pinIsVisible}) => {
   const [src, setSrc] = useState('defaultPin.png');
   
 
