@@ -13,6 +13,8 @@ import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Grid from "@nextui-org/react"
+import GoogleMaps from '../google_maps/page';
 
 //Essa info vai vir da consulta do backend
 const parksList = [
@@ -209,7 +211,7 @@ const Search: React.FC = () => {
   return (
     <>
       <div>
-        <Header></Header>
+        <Header />
       </div>
       
       <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
@@ -225,6 +227,7 @@ const Search: React.FC = () => {
       )}
       <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 gap-4 mt-36 px-4">
         <div className="flex w-full justify-between">
+          <GoogleMaps />
           <div>
             <Image id='filtro'
               src="/images/filtro.png"
