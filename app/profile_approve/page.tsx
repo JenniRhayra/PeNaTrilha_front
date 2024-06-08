@@ -52,13 +52,13 @@ const Home: React.FC = () => {
   return (
     <div style={{position:'absolute'}}>
         <Header />
-        <ButtonBack />
+        <ButtonBack top={'6vh'}/>
         <SearchComponent title='GUIAS' />
         <div>
           <HeaderControl showDelete={true} />
         </div>
         <ProfileApprove profile={guides} />
-        <FooterMenu activePage="visited" />
+        <FooterMenu activePage="profile" />
     </div>
   );
 };

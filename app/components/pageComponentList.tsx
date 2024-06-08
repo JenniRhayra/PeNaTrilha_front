@@ -21,7 +21,7 @@ interface ProfileListProps {
   layout: 'column' | 'row';
   showCheckIcon?: boolean;
   showCRUDIcons?: boolean;
-  showViewMoreLink?: boolean; // Nova propriedade
+  showViewMoreLink?: boolean;
 }
 
 const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, showCRUDIcons, showViewMoreLink = true }) => { // Valor padrão true para showViewMoreLink
@@ -77,6 +77,14 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
       setOpenDeleteDialog(false);
     }
   };
+
+  const truncateText = (text: string, maxLength: number): string => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
+  };
+  
 
   const ArrowButton = styled.button<{ left?: boolean; visible?: boolean }>`
     position: absolute;
@@ -182,25 +190,25 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                 secondary={
                   <>
                     {profile.description && (
-                      <Typography component="span" variant="body2" color="textPrimary">
-                        {profile.description}
+                      <Typography component="span" fontSize={'12px'} color="textPrimary">
+                        {truncateText(profile.description, 45)}
                       </Typography>
                     )}
                     <br />
                     {profile.language && (
-                      <>
+                      <Typography component="span" fontSize={'12px'}>
                         Idioma: {profile.language}
                         <br />
-                      </>
+                      </Typography>
                     )}
-                                        {profile.park && (
-                      <>
+                    {profile.park && (
+                      <Typography component="span" fontSize={'12px'}>
                         Parque: {profile.park}
                         <br />
-                      </>
+                      </Typography>
                     )}
                     <div style={{ textAlign: 'right' }}>
-                      {showViewMoreLink && ( // Condição para renderizar o link "Ver mais"
+                      {showViewMoreLink && (
                         <Link href={profile.link} passHref>
                           <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver mais</Typography>
                         </Link>
@@ -210,7 +218,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                           <>
                             <FiEye onClick={() => handleView(profile)} style={{ cursor: 'pointer' }} />
                             <FiEdit onClick={() => handleEdit(profile)} style={{ cursor: 'pointer' }} />
-                            <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} />
+                            <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} color='#EF2945' />
                           </>
                         )}
                       </IconContainer>

@@ -18,7 +18,6 @@ import Link from "next/link";
 import Image from 'next/image';
 import ButtonGreen from '../components/buttonGreen';
 import PhotoUploader from '../components/photoUploader';
-import { useEffect } from 'react';
 
 const TypePark = [
     {

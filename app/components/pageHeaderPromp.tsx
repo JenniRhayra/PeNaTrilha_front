@@ -45,13 +45,17 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
         if (className === 'subtitles_content') {
           if (isFirstSubtitle) {
             // Adiciona um espaço antes do primeiro subtítulo
-            formattedText += `\n\n*${getTextFromChildren(nestedChildren)}*\n`;
+            formattedText += `\n*${getTextFromChildren(nestedChildren)}*\n`;
             isFirstSubtitle = false;
           } else {
             formattedText += `*${getTextFromChildren(nestedChildren)}*\n`;
           }
         } else if (element.type === 'p') {
           formattedText += `${getTextFromChildren(nestedChildren)}\n\n`;
+        } else if (element.type === 'h1') {
+          formattedText += `\n${getTextFromChildren(nestedChildren)}\n`;
+        } else if (className === 'tira-do-share') {
+          // Ignora o conteúdo dentro da div com a classe 'tira-do-share'
         } else {
           traverseChildren(nestedChildren);
         }
@@ -61,7 +65,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
     traverseChildren(children);
   
     return formattedText.trim();
-  };
+  };  
 
   const textFromChildren = getTextFromChildren(children).trim();
   const formattedTextToShare = `*${title.toUpperCase()} 🌳*\n${textFromChildren}`;
