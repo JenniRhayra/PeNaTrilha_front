@@ -53,8 +53,8 @@ const RegisterContent: React.FC = () => {
             <Header />
             <ButtonBack />
             <SearchComponent title='ATIVIDADES' />
-            <HeaderControl />
-            <PageComponentList type={activities} layout='column' showCRUDIcons={true} />
+            <HeaderControl showAdd ={true}/>
+            <PageComponentList type={activities} layout='column' showCRUDIcons={true} showViewMoreLink={false} />
             <FooterMenu activePage="profile" />
         </Container>
     );

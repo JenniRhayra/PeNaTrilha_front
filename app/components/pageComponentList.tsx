@@ -20,10 +20,11 @@ interface ProfileListProps {
   type: Profile[];
   layout: 'column' | 'row';
   showCheckIcon?: boolean;
-  showCRUDIcons?: boolean; // Novo parâmetro
+  showCRUDIcons?: boolean;
+  showViewMoreLink?: boolean; // Nova propriedade
 }
 
-const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, showCRUDIcons }) => {
+const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, showCRUDIcons, showViewMoreLink = true }) => { // Valor padrão true para showViewMoreLink
   const [scrollX, setScrollX] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
@@ -33,7 +34,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
   const handleScroll = (direction: 'right' | 'left') => {
     const container = document.getElementById('guide-list-container');
     if (container) {
-      const step = 300; // Step size for each scroll
+      const step = 300;
       const maxScroll = container.scrollWidth - container.clientWidth;
       if (direction === 'right') {
         const newScrollX = Math.min(scrollX + step, maxScroll);
@@ -54,12 +55,10 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
   };
 
   const handleView = (profile: Profile) => {
-    // Implemente a lógica para VISUALIZAR o perfil
     console.log("Visualizando perfil:", profile.name);
   };
 
   const handleEdit = (profile: Profile) => {
-    // Implemente a lógica para EDITAR o perfil
     console.log("Editando perfil:", profile.name);
   };
 
@@ -73,10 +72,8 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
   };
 
   const handleConfirmDelete = () => {
-    // Implemente a lógica para EXCLUIR o perfil
     if (selectedProfile) {
       console.log("Excluindo perfil:", selectedProfile.name);
-      // Adicione aqui a lógica de exclusão
       setOpenDeleteDialog(false);
     }
   };
@@ -102,7 +99,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
     position: relative;
     margin-bottom: 10px;
     background-color: white;
-    border-radius: 5px;
+    border-radius: 10px;
     width: ${layout === 'column' ? '100%' : 'auto'};
     height: ${layout === 'row' ? '125px' : 'auto'};
     min-width: ${layout === 'row' ? '300px' : 'auto'};
@@ -113,7 +110,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
     position: relative;
     width: 80px;
     height: 80px;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
   `;
 
@@ -141,18 +138,25 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
     z-index: 2;
   `;
 
+  const IconContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+  `;
+
   return (
     <div>
-      <div id="guide-list-container" style={{ overflowX: 'hidden', width: '100%'}}>
-        <List style={{ 
-            display: 'flex', 
-            flexDirection: layout === 'column' ? 'column' : 'row', 
-            justifyContent: 'left', 
-            padding: layout === 'column' ? '30px 20px 60px 20px' : '0', 
-            margin: '0', 
-            scrollBehavior: 'smooth', 
-            transform: `translateX(-${scrollX}px)` }}>
-
+      <div id="guide-list-container" style={{ overflowX: 'hidden', width: '100%' }}>
+        <List style={{
+          display: 'flex',
+          flexDirection: layout === 'column' ? 'column' : 'row',
+          justifyContent: 'left',
+          padding: layout === 'column' ? '30px 20px 60px 20px' : '0',
+          margin: '0',
+          scrollBehavior: 'smooth',
+          transform: `translateX(-${scrollX}px)`
+        }}>
           {type.map((profile, index) => (
             <ListItemStyled key={index}>
               {showCheckIcon && (
@@ -189,28 +193,32 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                         <br />
                       </>
                     )}
-                    {profile.park && (
+                                        {profile.park && (
                       <>
                         Parque: {profile.park}
                         <br />
                       </>
                     )}
                     <div style={{ textAlign: 'right' }}>
-                      <Link href={profile.link} passHref>
-                        <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver perfil</Typography>
-                      </Link>
+                      {showViewMoreLink && ( // Condição para renderizar o link "Ver mais"
+                        <Link href={profile.link} passHref>
+                          <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver mais</Typography>
+                        </Link>
+                      )}
+                      <IconContainer>
+                        {showCRUDIcons && (
+                          <>
+                            <FiEye onClick={() => handleView(profile)} style={{ cursor: 'pointer' }} />
+                            <FiEdit onClick={() => handleEdit(profile)} style={{ cursor: 'pointer' }} />
+                            <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} />
+                          </>
+                        )}
+                      </IconContainer>
                     </div>
                   </>
                 }
                 style={{ paddingLeft: '20px' }}
               />
-              {showCRUDIcons && (
-                <>
-                  <FiEye onClick={() => handleView(profile)} style={{ cursor: 'pointer', marginRight: '5px' }} />
-                  <FiEdit onClick={() => handleEdit(profile)} style={{ cursor: 'pointer', marginRight: '5px' }} />
-                  <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} />
-                </>
-              )}
             </ListItemStyled>
           ))}
         </List>
@@ -227,7 +235,6 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
         </div>
       )}
 
-      {/* Diálogo de confirmação de exclusão */}
       <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Confirmação de Exclusão</DialogTitle>
         <DialogContent>
