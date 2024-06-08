@@ -1,4 +1,3 @@
-// pages/registerContent.tsx
 "use client";
 
 import React from 'react';
@@ -13,7 +12,6 @@ import SearchComponent from '../components/searchComponent';
 
 const RegisterContent: React.FC = () => {
 
-    // Dados fictícios de atividades
     const activities = [
         {
           photo: '/images/at01.jpeg',
@@ -51,7 +49,7 @@ const RegisterContent: React.FC = () => {
     return (
         <Container>
             <Header />
-            <ButtonBack />
+            <ButtonBack top={'6vh'}/>
             <SearchComponent title='ATIVIDADES' />
             <HeaderControl showAdd ={true}/>
             <PageComponentList type={activities} layout='column' showCRUDIcons={true} showViewMoreLink={false} />

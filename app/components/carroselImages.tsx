@@ -138,7 +138,7 @@ const CarouselImages: React.FC<CarouselProps> = ({ images, titles, links, imageW
         {images.map((src, index) => (
           <ImageWrapper key={index} imageWidth={imageWidth} imageHeight={imageHeight} imageSpacing={imageSpacing} borderRadius={borderRadius}>
             <Link href={links[index]}>
-              <img src={src} alt={`Image ${index + 1}`}/>
+              <Image src={src} alt={`Image ${index + 1}`} width={imageWidth} height={imageHeight} />
             </Link>
             <ImageTitle>{titles[index]}</ImageTitle>
           </ImageWrapper>
