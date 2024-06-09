@@ -13,8 +13,13 @@ import usePlacesAutocomplete, {
     getLatLng,
 } from 'use-places-autocomplete';
 import styles from './google_maps.module.css';
+import { FaLocationDot } from 'react-icons/fa6';
 
-const GoogleMaps: NextPage = () => {
+interface GoogleMapsProps {
+    showMap?: boolean;
+}
+
+const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false }) => {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -66,28 +71,27 @@ const GoogleMaps: NextPage = () => {
                     onAddressSelect={(address) => {
                         getGeocode({ address: address }).then((results) => {
                             const { lat, lng } = getLatLng(results[0]);
-
                             setLat(lat);
                             setLng(lng);
                         });
                     }}
                 />
             </div>
-            <GoogleMap
-                options={mapOptions}
-                zoom={14}
-                center={mapCenter}
-                mapTypeId={google.maps.MapTypeId.ROADMAP}
-                mapContainerStyle={{ width: '100%', height: '400px' }}
-                onLoad={(map) => console.log('Map Loaded')}
-            >
-                <MarkerF
-                    position={mapCenter}
-                    onLoad={() => console.log('Marker Loaded')}
-                />
+            {showMap && (
+                <GoogleMap
+                    options={mapOptions}
+                    zoom={14}
+                    center={mapCenter}
+                    mapTypeId={google.maps.MapTypeId.ROADMAP}
+                    mapContainerStyle={{ width: '100%', height: '200px' }}
+                    onLoad={(map) => console.log('Map Loaded')}
+                >
+                    <MarkerF
+                        position={mapCenter}
+                        onLoad={() => console.log('Marker Loaded')}
+                    />
 
-                {[400, 1000].map((radius, idx) => {
-                    return (
+                    {[400, 1000].map((radius, idx) => (
                         <CircleF
                             key={idx}
                             center={mapCenter}
@@ -99,9 +103,9 @@ const GoogleMaps: NextPage = () => {
                                 strokeOpacity: 0.8,
                             }}
                         />
-                    );
-                })}
-            </GoogleMap>
+                    ))}
+                </GoogleMap>
+            )}
         </div>
     );
 };
@@ -148,14 +152,16 @@ const PlacesAutocomplete = ({
 
     return (
         <div className={styles.autocompleteWrapper}>
-            <input
-                value={value}
-                className={styles.autocompleteInput}
-                disabled={!ready}
-                onChange={(e) => setValue(e.target.value)}
-                placeholder="Av. Eng. Carlos Reinaldo Mendes"
-            />
-
+            <div className={styles.inputContainer}>
+                <FaLocationDot className={styles.locationIcon} />
+                <input
+                    value={value}
+                    className={styles.autocompleteInput}
+                    disabled={!ready}
+                    onChange={(e) => setValue(e.target.value)}
+                    placeholder="Av. Eng. Carlos Reinaldo Mendes"
+                />
+            </div>
             {status === 'OK' && (
                 <ul className={styles.suggestionWrapper}>{renderSuggestions()}</ul>
             )}

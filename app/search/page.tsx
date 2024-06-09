@@ -251,35 +251,25 @@ const Search: React.FC = () => {
         <Header />
       </div>
 
-      <div id='main'>
-        <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
-          <SearchComponent title={handleSearchTitle()} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
-        </div>
+      <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 px-4">
 
-        {filterValue?.toString() == 'p' &&(
-            <div id='divLocationMapa' style={{position: 'relative', marginTop:'8rem', marginLeft:'70%'}}>
-                <Image id='mapaIcon'
-                  src="/images/mapa.png"
-                  alt="ícone mapa"
-                  width={35}
-                  onClick={handleIconMapClick}
-                  height={35}
-                  className='cursor-pointer' />
-                
-            </div>        
-        )}
-      </div>
-      <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 gap-4 mt-36 px-4">
+        <div id='tituloPagina' style={{ marginTop: '12vh', alignItems: 'center', width: '100%'}}>
+          <h1 style={{ 
+            textAlign: 'center',
+            textTransform: 'uppercase', 
+            fontSize: '18px', 
+            fontWeight: 'bold', 
+            color: '#667358'
+          }}>{handleSearchTitle()}</h1>
+        </div>  
 
-        {filterValue?.toString() == 'p' && iconMapClicked && (
+        {filterValue?.toString() == 'p' && (
           <div id='paiGoogle' style={{width:'100%'}}>
-            <div id='divGoogleMaps'>
-            <GoogleMaps />
-            </div>
+            <GoogleMaps showMap={true}/>
           </div>  
         )}
-        
-        <div className="flex w-full justify-between" style={{marginTop:'4rem'}}>  
+
+        <div className="flex w-full justify-between" style={{marginTop:'2vh'}}>  
           <div>
             <Image id='filtro'
               src="/images/filtro.png"
