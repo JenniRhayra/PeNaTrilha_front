@@ -126,7 +126,7 @@ export default function Create_Account(){
     }
 
     return (
-        <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
+        <main className="flex flex-col h-screen min-h-screen container mx-auto">
             <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 right-0'>
                 <Image
                     src="/images/img_abs_01.png"
@@ -151,11 +151,11 @@ export default function Create_Account(){
                 <PhotoUploader />
                 <h1 className='ml-2'>Selecionar foto</h1>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-[#F8F8F8]">
                 <Box 
                     component="form" 
                     onSubmit={handleSubmit(handleFormSubmit)}
-                    sx={{ display: 'block', p: 1, m: 1, }}>
+                    sx={{ display: 'block', p: 1, m: 1}}>
                     <div>
                         <TextField
                             label="Nome completo"
@@ -284,7 +284,7 @@ export default function Create_Account(){
                         <ButtonGreen width= '40ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
                     <div>
-                        <Link href="../">TERMINAR DEPOIS</Link>
+                        <Link href="/home">TERMINAR DEPOIS</Link>
                     </div>
                 </Box>
             </div>

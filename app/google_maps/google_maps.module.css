@@ -1,0 +1,50 @@
+.homeWrapper {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.autocompleteWrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 2vh auto 0;
+    padding: 0 5px;
+}
+
+.locationIcon {
+    color: black;
+    font-size: 20px; 
+}
+
+.autocompleteInput {
+    flex: 1;
+    padding: 8px;
+    color: black;
+    font-size: 14px; 
+    background: none;
+    font-weight: bold;
+}
+
+.suggestionWrapper {
+    margin: 0;
+    width: 96%;
+    overflow-x: hidden;
+    list-style: none;
+    display: block;
+    padding: 4px;
+}
+
+.suggestionWrapper > li {
+    padding: 8px 4px;
+    background-color: lightcoral;
+    margin: 4px 0;
+    cursor: pointer;
+}

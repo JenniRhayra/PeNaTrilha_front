@@ -1,31 +1,74 @@
-import React, { useState } from 'react';
+import React, { useState, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
+import ShareOnWhatsApp from '../components/shareWhatsapp';
 
 interface PageHeaderProps {
   backgroundImageUrl: string;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   showCheck?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, children, showCheck = false }) => {
+  const [share, setShare] = useState(false);
   const [checked, setChecked] = useState(false);
-  const navigation = useRouter();
+  const router = useRouter();
 
   const handleGoBack = () => {
-    navigation.back();
+    router.back();
   };
 
   const handleShare = () => {
-    // Implement your share functionality here
-    alert('Share functionality');
+    setShare(true);
   };
 
   const handleCheckClick = () => {
     setChecked(!checked);
   };
+
+  // Função para converter o conteúdo dos filhos para string com formatação
+  const getTextFromChildren = (children: ReactNode): string => {
+    let isFirstSubtitle = true; // Flag para controlar se é o primeiro subtítulo
+    let formattedText = ''; // String formatada
+  
+    const traverseChildren = (child: ReactNode) => {
+      if (typeof child === 'string') {
+        formattedText += child.trim();
+      } else if (Array.isArray(child)) {
+        child.forEach(traverseChildren);
+      } else if (React.isValidElement(child)) {
+        const element = child as React.ReactElement;
+        const { children: nestedChildren, className } = element.props || {};
+  
+        if (className === 'subtitles_content') {
+          if (isFirstSubtitle) {
+            // Adiciona um espaço antes do primeiro subtítulo
+            formattedText += `\n*${getTextFromChildren(nestedChildren)}*\n`;
+            isFirstSubtitle = false;
+          } else {
+            formattedText += `*${getTextFromChildren(nestedChildren)}*\n`;
+          }
+        } else if (element.type === 'p') {
+          formattedText += `${getTextFromChildren(nestedChildren)}\n\n`;
+        } else if (element.type === 'h1') {
+          formattedText += `\n${getTextFromChildren(nestedChildren)}\n`;
+        } else if (className === 'tira-do-share') {
+          // Ignora o conteúdo dentro da div com a classe 'tira-do-share'
+        } else {
+          traverseChildren(nestedChildren);
+        }
+      }
+    };
+  
+    traverseChildren(children);
+  
+    return formattedText.trim();
+  };  
+
+  const textFromChildren = getTextFromChildren(children).trim();
+  const formattedTextToShare = `*${title.toUpperCase()} 🌳*\n${textFromChildren}`;
 
   return (
     <div style={{ position: 'relative', height: '100vh', overflow: 'hidden' }}>
@@ -33,7 +76,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       <div
         style={{
           width: '100%',
-          height: '40vh', // Ajustado para 40% da altura da tela
+          height: '40vh',
           backgroundImage: `url(${backgroundImageUrl})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
@@ -85,6 +128,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
         {/* Ícone de compartilhar */}
         <div style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.7)', padding: '5px' }} onClick={handleShare}>
           <FiShare2 size={30} color="white" />
+          {share && <ShareOnWhatsApp text={formattedTextToShare} />}
         </div>
       </div>
 
@@ -114,7 +158,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       )}
 
       {/* Retângulo arredondado */}
-      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1 }}>
+      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px 30px 60px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1, overflow:'auto'}}>
         {/* Conteúdo dentro do retângulo */}
         {children}
       </div>
