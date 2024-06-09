@@ -19,7 +19,7 @@ interface GoogleMapsProps {
     showMap?: boolean;
 }
 
-const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false }) => {
+const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false}) => {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -83,7 +83,7 @@ const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false }) => {
                     zoom={14}
                     center={mapCenter}
                     mapTypeId={google.maps.MapTypeId.ROADMAP}
-                    mapContainerStyle={{ width: '100%', height: '200px' }}
+                    mapContainerStyle={{ width: '100%', height: '150px' }}
                     onLoad={(map) => console.log('Map Loaded')}
                 >
                     <MarkerF
@@ -159,7 +159,7 @@ const PlacesAutocomplete = ({
                     className={styles.autocompleteInput}
                     disabled={!ready}
                     onChange={(e) => setValue(e.target.value)}
-                    placeholder="Av. Eng. Carlos Reinaldo Mendes"
+                    placeholder="Sorocaba/SP"
                 />
             </div>
             {status === 'OK' && (

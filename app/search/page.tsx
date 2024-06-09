@@ -1,13 +1,12 @@
 "use client"
 
-import React, { useContext } from 'react';
+import React from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import SearchComponent from '../components/searchComponent';
 import { Autocomplete, AutocompleteItem} from "@nextui-org/react";
 import { useState } from 'react';
 import Card from '../components/cardComponent';
-import Image from 'next/image';
 import Stack from '@mui/material/Stack';
 import Slider from '@mui/material/Slider';
 import Menu from '@mui/material/Menu';
@@ -18,6 +17,8 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Checkbox from '@mui/material/Checkbox';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
+import { FaFilter } from "react-icons/fa6";
+import { FaSortAlphaDown } from 'react-icons/fa';
 
 //Essa info vai vir da consulta do backend
 const parksList = [
@@ -114,6 +115,26 @@ const Search: React.FC = () => {
     'Inglês',
     'Francês',  
   ];
+
+  const guideEspec = [
+    'Botânica',
+    'Montanhismo',
+    'Observação de aves',  
+  ];
+
+  const infraPark = [
+    'Banheiro',
+    'Hospedagem',
+    'Restaurante', 
+    'Acessibilidade',
+    'Estacionamento' 
+  ];
+
+  const [infraSelected, setInfraSelected] = useState<string[]>([]);
+
+  const handleInfraChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    setInfraSelected(event.target.value as string[]);
+  };
  
   const [isDivFilterVisible, setDivFilterVisible] = useState(false);
   const [sliderValue, setSliderValue] = React.useState<number>(5);
@@ -121,7 +142,6 @@ const Search: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedSortIndex, setSelectedIndex] = React.useState(2);
   const [parks, setParks] = useState<any[]>(parksList);
-  const [iconMapClicked, setMapClicked] = useState(false);
   
   const open = Boolean(anchorEl);
 
@@ -218,11 +238,8 @@ const Search: React.FC = () => {
     return sortListFiltered;
   }
 
-  const handleIconMapClick = () => {
-    setMapClicked(!iconMapClicked);
-  }
-
-  const [personName, setPersonName] = React.useState<string[]>([]);
+  const [language, setLanguage] = React.useState<string[]>([]);
+  const [espec, setEspec] = React.useState<string[]>([]);
   
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -235,11 +252,11 @@ const Search: React.FC = () => {
     },
   };
 
-  const handleCheckBoxChange = (event: SelectChangeEvent<typeof personName>) => {
+  const handleCheckBoxChange = (event: SelectChangeEvent<typeof language>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setLanguage(
       // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
     );
@@ -251,49 +268,40 @@ const Search: React.FC = () => {
         <Header />
       </div>
 
+      <div id='main'>
+        <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
+          <SearchComponent title={`BUSCAR - ${handleSearchTitle()}`} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
+        </div>
+      </div>
+
       <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 px-4">
-
-        <div id='tituloPagina' style={{ marginTop: '12vh', alignItems: 'center', width: '100%'}}>
-          <h1 style={{ 
-            textAlign: 'center',
-            textTransform: 'uppercase', 
-            fontSize: '18px', 
-            fontWeight: 'bold', 
-            color: '#667358'
-          }}>{handleSearchTitle()}</h1>
-        </div>  
-
-        {filterValue?.toString() == 'p' && (
-          <div id='paiGoogle' style={{width:'100%'}}>
+        {filterValue?.toString() === 'p' ? (
+          <div id='paiGoogle' style={{ width: '100%', marginTop:'20vh' }}>
             <GoogleMaps showMap={true}/>
-          </div>  
+          </div>
+        ) : (
+          <div id='paiGoogle' style={{ width: '100%' }}>
+            <GoogleMaps showMap={false}/>
+          </div>
         )}
+      </div>
 
-        <div className="flex w-full justify-between" style={{marginTop:'2vh'}}>  
-          <div>
-            <Image id='filtro'
-              src="/images/filtro.png"
-              alt="filtro"
-              width={25}
+      <div>
+        <div className='filters' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'flex-end', alignItems: 'center', padding:'0 3vh 2vh 0'}}>
+          <div style={{ marginRight: '3vh', alignItems:'center', display: 'flex' }}>
+            <FaFilter
+              style={{ fontSize: 20, cursor: 'pointer' }}
               onClick={handleFilterClick}
-              height={25}
-              className='cursor-pointer'
             />
-            <label htmlFor="filtro" className='block'> Filtrar </label>
+            <label htmlFor="filtro" className='block' style={{ fontSize: 12, marginLeft: '0.5rem' }}> Filtrar </label>
           </div>
 
-          <div className="md:self-end">
-            <Image id='ordenar'
-              src="/images/sort.png"
-              alt="ordenar"
-              width={25}
-              height={25}
-              className='cursor-pointer'
+          <div style={{ alignItems: 'center', display: 'flex' }}>
+            <FaSortAlphaDown 
+              style={{ fontSize: 20, cursor: 'pointer' }}
               onClick={handleSortClick}
             />
-
-            <label htmlFor="ordenar" className='block'> Ordenar</label>
-
+            <label htmlFor="ordenar" className='block' style={{ fontSize: 12, marginLeft: '0.5rem' }}> Ordenar</label>
             <Menu
               id="lock-menu"
               anchorEl={anchorEl}
@@ -309,7 +317,6 @@ const Search: React.FC = () => {
                   key={option}
                   onClick={(event) => handleSortItemClick(event, index)}             
                   selected={index === selectedSortIndex}
-                  
                 >
                   {option}
                 </MenuItem>
@@ -319,59 +326,127 @@ const Search: React.FC = () => {
         </div>
 
         {isDivFilterVisible && (
-          <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4 justify-start" style={{ borderBottom: '1px solid #667358', borderRadius: '4px', padding:'1em', justifyContent:'center'}}>
+          <div style={{gridTemplateColumns: '1fr 1fr', marginTop: '0vh 3vh', justifyContent: 'flex-start', backgroundColor:'white', alignItems: 'center', padding:'3vh 2vh', borderBottom: '1px solid #667358', borderRadius: '4px'}}>
+            <div style={{display: 'flex', flexDirection: 'column', marginBottom: '1vh'}}>
+              <div style={{marginBottom: '3vh'}}>
+                <Autocomplete 
+                  isRequired
+                  label="Selecione um filtro:"
+                  labelPlacement={"outside-left"}
+                  variant="bordered"
+                  defaultItems={itemsFilterPrincipal}
+                  className="max-w-xs"
+                  selectedKey={filterValue}
+                  onSelectionChange={setSelectedFilter}
+                  defaultSelectedKey={'p'}
+                >
+                  {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+                </Autocomplete >
+              </div>
 
-              <Autocomplete 
-                isRequired
-                label="Selecione um filtro:"
-                labelPlacement={"outside-left"}
-                variant="bordered"
-                defaultItems={itemsFilterPrincipal}
-                //startContent={<PetIcon className="text-xl" />}
-                className="max-w-xs"
-                selectedKey={filterValue}
-                onSelectionChange={setSelectedFilter}
-                defaultSelectedKey={'p'}
-              >
-                {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-              </Autocomplete>
-            
-              {filterValue?.toString() == 'p' &&(
-                <div id='filtrosParque'> 
-                  <label> Distância: </label>
-                  <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-                    <Slider aria-label="Volume" value={sliderValue} onChange={handleSliderChange} />
-                  </Stack>
-                  
+              {filterValue?.toString() === 'p' && (
+                <div style={{  display: 'flex', justifyContent:'space-around', fontSize:'13px', color:'black'}}>
+                  <div id='filtrosParque' style={{ alignItems: 'center',width: '20vh'}}> 
+                    <label>Distância:</label>
+                    <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                      <Slider aria-label="Volume" value={sliderValue} onChange={handleSliderChange} />
+                    </Stack>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
+                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize:'13px', color:'black'}}>Infraestrutura</InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox"
+                      multiple
+                      value={infraSelected}
+                      onChange={handleInfraChange}
+                      input={<OutlinedInput label="Tag" />}
+                      renderValue={(selected) => {
+                        if (selected.length > 1) {
+                          return 'Vários campos';
+                        } else {
+                          return selected[0] || '';
+                        }
+                      }}
+                      MenuProps={MenuProps}
+                      style={{ width: '100%' }}
+                    >
+                      {infraPark.map((infra) => (
+                        <MenuItem key={infra} value={infra}>
+                          <Checkbox checked={infraSelected.indexOf(infra) > -1} />
+                          <ListItemText primary={infra} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
-              )}  
+              )}
 
               {filterValue?.toString() == 'g' &&(
-                <div>
-                  <InputLabel id="demo-multiple-checkbox-label">Idiomas</InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={personName}
-                    onChange={handleCheckBoxChange}
-                    input={<OutlinedInput label="Tag" />}
-                    renderValue={(selected) => selected.join(', ')}
-                    MenuProps={MenuProps}
-                  >
-                    {guideIdiomas.map((name) => (
-                      <MenuItem key={name} value={name}>
-                        <Checkbox checked={personName.indexOf(name) > -1} />
-                        <ListItemText primary={name} />
-                      </MenuItem>
-                    ))}
-                  </Select>
+                <div style={{  display: 'flex', justifyContent:'space-around', fontSize:'13px', color:'black'}}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
+                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize:'13px', color:'black'}}>Idiomas</InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label"
+                      id="demo-multiple-checkbox_idioma"
+                      multiple
+                      value={language}
+                      onChange={handleCheckBoxChange}
+                      input={<OutlinedInput label="Tag" />}
+                      renderValue={(selected) => {
+                        if (selected.length > 1) {
+                          return 'Vários campos';
+                        } else {
+                          return selected[0] || '';
+                        }
+                      }}
+                      MenuProps={MenuProps}
+                      style={{ width: '100%' }}
+                    >
+                      {guideIdiomas.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          <Checkbox checked={language.indexOf(name) > -1} />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
+                    <InputLabel id="demo-multiple-checkbox-label_espec" sx={{ fontSize:'13px', color:'black'}}>Especialidade</InputLabel>
+                    <Select
+                      labelId="demo-multiple-checkbox-label_espec"
+                      id="demo-multiple-checkbox_espec"
+                      multiple
+                      value={espec}
+                      onChange={handleCheckBoxChange}
+                      input={<OutlinedInput label="Tag" />}
+                      renderValue={(selected) => {
+                        if (selected.length > 1) {
+                          return 'Vários campos';
+                        } else {
+                          return selected[0] || '';
+                        }
+                      }}
+                      MenuProps={MenuProps}
+                      style={{ width: '100%' }}
+                    >
+                      {guideEspec.map((name) => (
+                        <MenuItem key={name} value={name}>
+                          <Checkbox checked={espec.indexOf(name) > -1} />
+                          <ListItemText primary={name} />
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </div>
                 </div>
               )}  
-          </div> 
+            </div> 
+          </div>
         )}
 
-        <div id='cardsConteiner' className='w-full flex flex-wrap justify-center' style={{paddingLeft:'inherit', paddingBottom:'3rem'}}>
+        <div id='cardsConteiner' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'center', flexWrap:'wrap',alignItems: 'center', padding:'0 3vh 2vh 3vh'}}>
           {parks?.map((park, index) => (
             <div key={index}>
               <Card
@@ -388,6 +463,7 @@ const Search: React.FC = () => {
         </div>
 
       </div>
+      <div style={{paddingBottom:'5vh'}}></div>
       <FooterMenu activePage='search'></FooterMenu>
 
     </>
