@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
-const ImageUpload: React.FC = () => {
-  const [image, setImage] = useState<File | null>(null);
+interface IPhotoUploaderProps {
+  setImage: any;
+  image_view: string;
+}
+
+export const PhotoUploader = ({ setImage, image_view }: IPhotoUploaderProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +45,7 @@ const ImageUpload: React.FC = () => {
             />
           ) : (
             <Image
-              src="/images/figure1.png"
+              src={`/images/${image_view}.png`}
               alt="Default Image"
               layout="fill"
               objectFit="cover"
@@ -60,5 +64,3 @@ const ImageUpload: React.FC = () => {
     </div>
   );
 };
-
-export default ImageUpload;
