@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft } from 'react-icons/fi';
 
+interface ButtonBackProps {
+  top?: string;
+}
 
-const ButtonBack: React.FC = () => {
+const ButtonBack: React.FC<ButtonBackProps> = ({ top = '0vh' }) => {
     const navigation = useRouter();
 
     const handleGoBack = () => {
@@ -11,8 +14,7 @@ const ButtonBack: React.FC = () => {
     };
 
   return (
-    <div style={{ position: 'absolute'}}>
-      {/* Ícones de voltar*/}
+    <div style={{ position: 'absolute', top: `${top}`}}>
         <div
             style={{
             position: 'absolute',
@@ -26,7 +28,6 @@ const ButtonBack: React.FC = () => {
             zIndex: 999,
             }}
         >
-            {/* Ícone de voltar */}
             <div style={{ cursor: 'pointer', borderRadius: '50%', backgroundColor: 'rgba(0, 0, 0, 0.7)', padding: '5px' }} onClick={handleGoBack}>
                 <FiArrowLeft size={24} color="white" />
             </div>

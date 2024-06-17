@@ -1,12 +1,13 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import CarouselImages from '../components/carroselImages';
-import styled from 'styled-components';
 import '../globals.css';
-import LocationComponent from '../components/locationComponent';
+import GoogleMaps from '../google_maps/page';
+import CustomSkeleton from '../components/customSkeleton';
 
 const SelectorContainer = styled.div`
   display: flex;
@@ -33,10 +34,21 @@ const SelectorDot = styled.div`
   position: absolute;
   bottom: -1px;
   left: 50%;
-  transform: translateX(-50%);`;
+  transform: translateX(-50%);
+`;
 
 const Home: React.FC = () => {
   const [selected, setSelected] = useState<'Parques' | 'Eventos'>('Parques');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulando um tempo de carregamento
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const parquesData = {
     images: [
@@ -73,38 +85,41 @@ const Home: React.FC = () => {
   const selectedData = selected === 'Parques' ? parquesData : eventosData;
 
   return (
-    <div>
-      <Header />
-      <div className='content' style={{ padding: '20px' }}>
-        <h1 style={{textAlign: 'center', fontWeight: 'bold', color: '#7D9662', fontSize:'20px'}}>BORA COMEÇAR?</h1>
-        
-        <div style={{alignItems: 'center'}}>
-          <LocationComponent showMap={false}/>
+    <>
+      {loading && <CustomSkeleton />}
+      {!loading && (
+        <div>
+          <Header />
+          <div className='content' style={{ padding: '20px' }}>
+            <h1 style={{textAlign: 'center', fontWeight: 'bold', color: '#7D9662', fontSize:'20px'}}>BORA COMEÇAR?</h1>
+            <div style={{alignItems: 'center'}}>
+              <GoogleMaps showMap={false}/>
+            </div>
+            <SelectorContainer>
+              <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
+                PARQUES
+                {selected === 'Parques' && <SelectorDot />}
+              </SelectorItem>
+              <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
+                EVENTOS
+                {selected === 'Eventos' && <SelectorDot />}
+              </SelectorItem>
+            </SelectorContainer>
+            <CarouselImages
+              images={selectedData.images}
+              titles={selectedData.titles}
+              links={selectedData.links}
+              imageWidth={200}
+              imageHeight={350}
+              borderRadius={30}
+              imageSpacing={20}
+            />
+          </div>
+          <div style={{paddingBottom: '50px'}}></div>
+          <FooterMenu activePage="home" />
         </div>
-        
-        <SelectorContainer>
-          <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
-            PARQUES
-            {selected === 'Parques' && <SelectorDot />}
-          </SelectorItem>
-          <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
-            EVENTOS
-            {selected === 'Eventos' && <SelectorDot />}
-          </SelectorItem>
-        </SelectorContainer>
-        <CarouselImages
-          images={selectedData.images}
-          titles={selectedData.titles}
-          links={selectedData.links}
-          imageWidth={200}
-          imageHeight={350}
-          borderRadius={30}
-          imageSpacing={20}
-        />
-      </div>
-      <div style={{paddingBottom: '50px'}}></div>
-      <FooterMenu activePage="home" />
-    </div>
+      )}
+    </>
   );
 };
 

@@ -10,7 +10,7 @@ const ShareOnWhatsApp = ({ text }: { text: string }) => {
     router.push(whatsappUrl);
   }, [text, router]);
 
-  return null; // Este componente não renderiza nada, pois redirecionamos diretamente para o link do WhatsApp
+  return null;
 };
 
 export default ShareOnWhatsApp;

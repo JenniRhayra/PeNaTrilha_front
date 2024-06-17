@@ -34,8 +34,8 @@ const Visited: React.FC = () => {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 0px;
     cursor: pointer;
+    margin-bottom: 80px;
   `;
 
   const AddText = styled.p`
@@ -49,7 +49,9 @@ const Visited: React.FC = () => {
     <div>
       <Header />
       <SearchComponent title='PARQUES VISITADOS'/>
-      <PageComponentList type={parks} layout='column' showCheckIcon={true}/>
+      <div style={{ paddingTop: '30vh' }}>
+        <PageComponentList type={parks} layout='column' showCheckIcon={true} />
+      </div>
       <AddIconContainer onClick={handleAddClick}>
         <IoMdAddCircle size={50} color="#7D9662"/>
         <AddText>Adicionar mais parques</AddText>

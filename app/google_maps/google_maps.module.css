@@ -1,23 +1,36 @@
 .homeWrapper {
     display: flex;
     justify-content: center;
-    align-items: center;
     flex-direction: column;
 }
 
-
-
 .autocompleteWrapper {
     width: 100%;
-    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.inputContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin: 0 auto 0;
+    padding: 0 5px;
+}
+
+.locationIcon {
+    color: black;
+    font-size: 20px; 
 }
 
 .autocompleteInput {
-    width: 96%;
-    margin: 84px auto 0 auto;
-    padding: 16px;
-    display: block;
-    border: 1px solid yellow;
+    flex: 1;
+    padding: 8px;
+    color: black;
+    font-size: 14px; 
+    background: none;
+    font-weight: bold;
 }
 
 .suggestionWrapper {
@@ -25,12 +38,11 @@
     width: 96%;
     overflow-x: hidden;
     list-style: none;
-    margin: 0 auto;
     display: block;
     padding: 4px;
 }
 
-.suggestionWrapper>li {
+.suggestionWrapper > li {
     padding: 8px 4px;
     background-color: lightcoral;
     margin: 4px 0;

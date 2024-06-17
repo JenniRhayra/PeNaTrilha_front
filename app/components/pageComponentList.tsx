@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-import { List, ListItem, ListItemText, ListItemAvatar, Avatar, Typography } from '@mui/material';
+import { FiArrowLeft, FiArrowRight, FiEye, FiEdit, FiTrash } from 'react-icons/fi';
+import { List, ListItem, ListItemText, ListItemAvatar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Image from 'next/image';
 import Link from 'next/link';
 import styled from 'styled-components';
@@ -20,35 +20,71 @@ interface ProfileListProps {
   type: Profile[];
   layout: 'column' | 'row';
   showCheckIcon?: boolean;
+  showCRUDIcons?: boolean;
+  showViewMoreLink?: boolean;
 }
 
-const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }) => {
+const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, showCRUDIcons, showViewMoreLink = true }) => { // Valor padrão true para showViewMoreLink
   const [scrollX, setScrollX] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
 
   const handleScroll = (direction: 'right' | 'left') => {
     const container = document.getElementById('guide-list-container');
     if (container) {
-      const step = 300; // Step size for each scroll
+      const step = 300;
       const maxScroll = container.scrollWidth - container.clientWidth;
       if (direction === 'right') {
         const newScrollX = Math.min(scrollX + step, maxScroll);
         setScrollX(newScrollX);
-        setShowLeftArrow(true); // Always show left arrow when scrolling
+        setShowLeftArrow(true);
         if (newScrollX >= maxScroll) {
-          setShowRightArrow(false); // Hide right arrow if no more content to scroll right
+          setShowRightArrow(false);
         }
       } else {
         const newScrollX = Math.max(scrollX - step, 0);
         setScrollX(newScrollX);
-        setShowRightArrow(true); // Always show right arrow when scrolling
+        setShowRightArrow(true);
         if (newScrollX === 0) {
-          setShowLeftArrow(false); // Hide left arrow if no more content to scroll left
+          setShowLeftArrow(false);
         }
       }
     }
   };
+
+  const handleView = (profile: Profile) => {
+    console.log("Visualizando perfil:", profile.name);
+  };
+
+  const handleEdit = (profile: Profile) => {
+    console.log("Editando perfil:", profile.name);
+  };
+
+  const handleDelete = (profile: Profile) => {
+    setSelectedProfile(profile);
+    setOpenDeleteDialog(true);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedProfile) {
+      console.log("Excluindo perfil:", selectedProfile.name);
+      setOpenDeleteDialog(false);
+    }
+  };
+
+  const truncateText = (text: string, maxLength: number): string => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
+  };
+  
 
   const ArrowButton = styled.button<{ left?: boolean; visible?: boolean }>`
     position: absolute;
@@ -71,7 +107,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
     position: relative;
     margin-bottom: 10px;
     background-color: white;
-    border-radius: 5px;
+    border-radius: 10px;
     width: ${layout === 'column' ? '100%' : 'auto'};
     height: ${layout === 'row' ? '125px' : 'auto'};
     min-width: ${layout === 'row' ? '300px' : 'auto'};
@@ -82,7 +118,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
     position: relative;
     width: 80px;
     height: 80px;
-    border-radius: 5px;
+    border-radius: 10px;
     overflow: hidden;
   `;
 
@@ -110,18 +146,25 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
     z-index: 2;
   `;
 
+  const IconContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 10px;
+  `;
+
   return (
     <div>
-      <div id="guide-list-container" style={{ overflowX: 'hidden', width: '100%'}}>
-        <List style={{ 
-            display: 'flex', 
-            flexDirection: layout === 'column' ? 'column' : 'row', 
-            justifyContent: 'left', 
-            padding: layout === 'column' ? '215px 20px 60px 20px' : '0', 
-            margin: '0', 
-            scrollBehavior: 'smooth', 
-            transform: `translateX(-${scrollX}px)` }}>
-
+      <div id="guide-list-container" style={{ overflowX: 'hidden', width: '100%' }}>
+        <List style={{
+          display: 'flex',
+          flexDirection: layout === 'column' ? 'column' : 'row',
+          justifyContent: 'left',
+          padding: layout === 'column' ? '30px 20px 60px 20px' : '0',
+          margin: '0',
+          scrollBehavior: 'smooth',
+          transform: `translateX(-${scrollX}px)`
+        }}>
           {type.map((profile, index) => (
             <ListItemStyled key={index}>
               {showCheckIcon && (
@@ -147,27 +190,38 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
                 secondary={
                   <>
                     {profile.description && (
-                      <Typography component="span" variant="body2" color="textPrimary">
-                        {profile.description}
+                      <Typography component="span" fontSize={'12px'} color="textPrimary">
+                        {truncateText(profile.description, 45)}
                       </Typography>
                     )}
                     <br />
                     {profile.language && (
-                      <>
+                      <Typography component="span" fontSize={'12px'}>
                         Idioma: {profile.language}
                         <br />
-                      </>
+                      </Typography>
                     )}
                     {profile.park && (
-                      <>
+                      <Typography component="span" fontSize={'12px'}>
                         Parque: {profile.park}
                         <br />
-                      </>
+                      </Typography>
                     )}
                     <div style={{ textAlign: 'right' }}>
-                      <Link href={profile.link} passHref>
-                        <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver perfil</Typography>
-                      </Link>
+                      {showViewMoreLink && (
+                        <Link href={profile.link} passHref>
+                          <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver mais</Typography>
+                        </Link>
+                      )}
+                      <IconContainer>
+                        {showCRUDIcons && (
+                          <>
+                            <FiEye onClick={() => handleView(profile)} style={{ cursor: 'pointer' }} />
+                            <FiEdit onClick={() => handleEdit(profile)} style={{ cursor: 'pointer' }} />
+                            <FiTrash onClick={() => handleDelete(profile)} style={{ cursor: 'pointer' }} color='#EF2945' />
+                          </>
+                        )}
+                      </IconContainer>
                     </div>
                   </>
                 }
@@ -188,6 +242,21 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon }
           </ArrowButton>
         </div>
       )}
+
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Confirmação de Exclusão</DialogTitle>
+        <DialogContent>
+          Tem certeza que deseja excluir o perfil de {selectedProfile?.name}?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} color="primary">
+            Não
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary">
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
