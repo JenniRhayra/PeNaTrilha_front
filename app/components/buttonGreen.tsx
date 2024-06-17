@@ -42,7 +42,6 @@ const LinkButton = styled.a<ButtonProps>`
   width: ${(props) => props.width || 'auto'}; /* Largura personalizada */
   border-radius: 5px;
   text-decoration: none;
-
   &:hover {
     background-color: #7d9662;
   }

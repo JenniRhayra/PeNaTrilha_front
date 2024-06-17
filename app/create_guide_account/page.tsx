@@ -17,113 +17,79 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Link from "next/link";
 import Image from 'next/image';
 import ButtonGreen from '../components/buttonGreen';
-import PhotoUploader from '../components/photoUploader';
+import { PhotoUploader } from '../components/photoUploader';
+import { useQuery } from '../hooks/useQuery';
+import { ILanguagesProps } from '../services/axios-config/connection/types/ILanguagesProps';
+import { PhoneMask } from '../components/Mask/PhoneMask';
+import { DateMask } from '../components/Mask/DateMask';
+import { guideService } from '../services/axios-config/connection';
+import { toast } from 'react-toastify';
+import { parkService } from '../services/axios-config/connection/park';
+import { IForestType } from '../services/axios-config/connection/types/IForestType';
+import { ISpecialityProps } from '../services/axios-config/connection/types/ISpecialityProps';
+import { IParkProp } from '../services/axios-config/connection/types/IParkProp';
 
-const TypePark = [
-    {
-      value: 'pe_carlos_botelho',
-      label: 'PE Carlos Botelho',
-    },
-    {
-      value: 'pe_intervales',
-      label: 'PE Intervales',
-    },
-    {
-      value: 'pe_alto_ribeira',
-      label: 'PETAR',
-    },
-    {
-      value: 'pn_chapada_veadeiros',
-      label: 'PN Chapada dos Veadeiros',
-    },
-];
-
-const TypeLanguage = [
-    {
-      value: 'pt-br',
-      label: 'Português (Brasil)',
-    },
-    {
-      value: 'en',
-      label: 'English',
-    },
-    {
-      value: 'es',
-      label: 'Español',
-    },
-];
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
     name: string;
 }
-  
-const PhoneMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
-    function PhoneMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        return (
-            <IMaskInput
-                {...other}
-                mask="(#0) 00000-0000"
-                definitions={{
-                    '#': /[1-9]/,
-                }}
-                inputRef={ref}
-                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-                overwrite
-            />
-        );
-    },
-);
-
-const DateMaskCustom = React.forwardRef<HTMLInputElement, CustomProps>(
-    function DateMaskCustom(props, ref) {
-        const { onChange, ...other } = props;
-        return (
-            <IMaskInput
-                {...other}
-                mask="#0/00/0000"
-                placeholder='DD/MM/AAAA'
-                definitions={{
-                    '#': /[1-9]/,
-                }}
-                inputRef={ref}
-                onAccept={(value: any) => onChange({ target: { name: props.name, value } })}
-                overwrite
-            />
-        );
-    },
-);
 
 
-export default function Create_Account(){
-    const {register, handleSubmit} = useForm();
+export default function Create_Account() {
+    const { register, handleSubmit, setValue } = useForm()
+
     const [nameError, setnameError] = useState("");
     const [parkError, setParkError] = useState("");
+    const [image, setImage] = useState<any>(null);
 
-    const handleRedirect = async (newPath: string) => {
-        location.pathname = newPath;
-    }
+    const [getLanguages, , loadingLanguages, refetchLanguages] = useQuery(() => guideService.listLanguages(), []);
 
-    const handleFormSubmit = (formData : any) => {
-        console.log('form data is ',formData);
-        if(!formData.input_name || !formData.input_name.length){
-            setnameError("Informe um nome")
-            return false;
-        } else {
-            setnameError("");
+    const languageOptions = (getLanguages || []).map((object: ILanguagesProps) => ({
+        value: object.id,
+        label: object.languageName,
+    }))
+
+    const [getSpeciality, , loadingSpeciality, refetchSpeciality] = useQuery(() => guideService.listSpeciality(), []);
+
+    const specialityOptions = (getSpeciality || []).map((object: ISpecialityProps) => ({
+        value: object.id,
+        label: object.specialtyName,
+    }))
+
+    const [getParks, , loadingParks, refetchParks] = useQuery(() => parkService.listParks(), []);
+
+    const parkOptions = (getParks || []).map((object: IParkProp) => ({
+        value: object.id,
+        label: object.park_name,
+    }))
+
+
+    const handleFormSubmit = async (guide_data: any) => {
+        toast.info('Registrado informações..')
+        try {
+            console.log('guide_data', guide_data)
+            const formData = new FormData();
+            formData.append('file', image);
+
+            formData.append('name', guide_data?.name);
+            formData.append('slugname', guide_data?.slugname);
+            formData.append('phone', guide_data?.phone);
+            formData.append('gender', guide_data?.gender);
+            formData.append('date', guide_data?.date);
+            formData.append('espec', JSON.stringify(guide_data?.espec));
+            formData.append('select_park', JSON.stringify(guide_data?.select_park));
+            formData.append('select_language', JSON.stringify(guide_data?.select_language));
+            formData.append('description', guide_data?.description);
+
+            await guideService.createGuideAccount(formData)
+
+            toast.success('Parque cadastrado com sucesso.')
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'Erro ao cadastrar o parque')
         }
 
-        // if(!formData.select_park || !formData.select_park.length){
-        //     setParkError("Informe um parque")
-        //     return false;
-        // } else {
-        //     setParkError("");
-        // }
-        handleRedirect('/');
-
-        return true;        
-    }
+    };
 
     return (
         <main className="flex flex-col h-screen min-h-screen container mx-auto">
@@ -148,34 +114,34 @@ export default function Create_Account(){
                 <h1 className="text-[#FFD21D] mb-4 text-xl lg:text-2xl uppercase font-bold text-center">guia</h1>
             </div>
             <div className='flex items-center justify-center text-left'>
-                <PhotoUploader />
+                <PhotoUploader setImage={setImage} image_view='figure1' />
                 <h1 className='ml-2'>Selecionar foto</h1>
             </div>
             <div className="text-center bg-[#F8F8F8]">
-                <Box 
-                    component="form" 
+                <Box
+                    component="form"
                     onSubmit={handleSubmit(handleFormSubmit)}
-                    sx={{ display: 'block', p: 1, m: 1}}>
+                    sx={{ display: 'block', p: 1, m: 1 }}>
                     <div>
                         <TextField
                             label="Nome completo"
-                            id="input_name"
+                            id="name"
                             sx={{ m: 1, width: '35ch' }}
                             variant="standard"
                             required
                             autoFocus
                             error={nameError && nameError.length ? true : false}
                             helperText={nameError}
-                            {...register('input_name')}
+                            {...register('name')}
                         />
                     </div>
                     <div>
                         <TextField
                             label="Gostaria de ser chamado(a) de..."
-                            id="input_slugname"
+                            id="slugname"
                             sx={{ m: 1, width: '35ch' }}
                             variant="standard"
-                            {...register('input_slugname')}
+                            {...register('slugname')}
                         />
                     </div>
                     <div>
@@ -183,47 +149,57 @@ export default function Create_Account(){
                             <InputLabel htmlFor="formatted-phone-mask-input">Telefone</InputLabel>
                             <Input
                                 //name="phonemask"
-                                id="formatted-phone-mask-input"
-                                {...register('formatted-phone-mask-input')}
-                                inputComponent={PhoneMaskCustom as any}
+                                id="phone"
+                                {...register('phone')}
+                                inputComponent={PhoneMask as any}
                             />
                         </FormControl>
                     </div>
                     <div className='flex flex-col items-center justify-center text-left'>
                         <FormControl required sx={{ m: 2, width: '35ch' }}>
-                            <FormLabel id="row-radio-buttons">Sexo</FormLabel>
+                            <FormLabel id="gender-id">Sexo</FormLabel>
                             <RadioGroup
                                 row
                                 aria-labelledby="buttons"
-                                //name="row-radio-buttons-group"
-                                defaultValue="female"
-                                {...register('row-radio-buttons')}
+                                {...register('gender')}
+                                onChange={(e) => setValue('gender', e.target.value)}
                             >
-                                <FormControlLabel value="female" control={<Radio />} label="feminino" />
-                                <FormControlLabel value="male" control={<Radio />} label="masculino" />
-                                <FormControlLabel value="na" control={<Radio />} label="não responder" />
+                                <FormControlLabel value="FEMININO" control={<Radio />} label="feminino" />
+                                <FormControlLabel value="MASCULINO" control={<Radio />} label="masculino" />
+                                <FormControlLabel value="NAO_RESPONDER" control={<Radio />} label="não responder" />
                             </RadioGroup>
                         </FormControl>
                     </div>
                     <div>
                         <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
-                            <InputLabel htmlFor="formatted-date-mask-input">Data de Nascimento</InputLabel>
+                            <InputLabel htmlFor="date">Data de Nascimento</InputLabel>
                             <Input
                                 //name="datemask"
-                                id="formatted-date-mask-input"
-                                {...register('formatted-date-mask-input')}
-                                inputComponent={DateMaskCustom as any}
+                                id="date"
+                                {...register('date')}
+                                inputComponent={DateMask as any}
                             />
                         </FormControl>
                     </div>
-                    <div>
-                        <TextField
-                            label="Especialidades"
-                            placeholder="Botânica, observação de aves..."
-                            id="input_espec"
+                    <div className='flex flex-col items-center justify-center'>
+                        <Autocomplete
                             sx={{ m: 1, width: '35ch' }}
-                            variant="standard"
-                            {...register('input_espec')}
+                            multiple
+                            id="espec"
+                            loading={loadingSpeciality}
+                            options={specialityOptions}
+                            getOptionLabel={(option: any) => option.label}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    variant="standard"
+                                    label="Especialidade"
+                                    placeholder="Selecionar especialidade"
+                                />
+                            )}
+                            onChange={(event, newValue) => {
+                                setValue('espec', newValue);
+                            }}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-center'>
@@ -231,19 +207,19 @@ export default function Create_Account(){
                             sx={{ m: 1, width: '35ch' }}
                             multiple
                             id="select_park"
-                            options={TypePark}
-                            getOptionLabel={(option) => option.label}
+                            options={parkOptions}
+                            getOptionLabel={(option: any) => option.label}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
                                     variant="standard"
                                     label="Parques"
                                     placeholder="Selecionar parque"
-                                    // error={parkError && parkError.length ? true : false}
-                                    // helperText={parkError}          
                                 />
                             )}
-                            {...register('select_park')}
+                            onChange={(event, newValue) => {
+                                setValue('select_park', newValue);
+                            }}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-center'>
@@ -251,8 +227,9 @@ export default function Create_Account(){
                             sx={{ m: 1, width: '35ch' }}
                             multiple
                             id="select_language"
-                            options={TypeLanguage}
-                            getOptionLabel={(option) => option.label}
+                            loading={loadingLanguages}
+                            options={languageOptions}
+                            getOptionLabel={(option: any) => option.label}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -261,18 +238,20 @@ export default function Create_Account(){
                                     placeholder="Selecionar idioma"
                                 />
                             )}
-                            {...register('select_language')}
+                            onChange={(event, newValue) => {
+                                setValue('select_language', newValue);
+                            }}
                         />
                     </div>
                     <div>
                         <TextField
                             sx={{ m: 1, width: '35ch' }}
-                            id="box_description"
+                            id="description"
                             label="Descrição"
                             multiline
                             rows={4}
                             placeholder="Conte um pouco sobre você, o que vocês faz, cursos e atividades que fez..."
-                            {...register('box_description')}
+                            {...register('description')}
                         />
                     </div>
                     <div className='flex flex-col items-center justify-start'>
@@ -281,7 +260,7 @@ export default function Create_Account(){
                         </p>
                     </div>
                     <div className='mt-10'>
-                        <ButtonGreen width= '40ch' type='submit'>CADASTRAR</ButtonGreen>
+                        <ButtonGreen width='40ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
                     <div>
                         <Link href="/home">TERMINAR DEPOIS</Link>
