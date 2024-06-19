@@ -10,16 +10,17 @@ import Input from '@mui/material/Input';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
-import Button from '@mui/material/Button';
 import FormHelperText from '@mui/material/FormHelperText';
 import { useState } from "react";
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
-import ButtonGreen from '../components/buttonGreen';
 import { usersService } from '../services/axios-config/connection';
 import { toast } from 'react-toastify';
+import ButtonGreen from '../components/buttonGreen';
 import ButtonBack from '../components/buttonBack';
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 const TypeProfile = [
     {
@@ -37,7 +38,7 @@ const TypeProfile = [
 ];
 
 export default function Register() {
-    const [showPassword, setShowPassword] = React.useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
@@ -47,95 +48,83 @@ export default function Register() {
     const [emailError, setEmailError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmpasswordError, setConfirmPasswordError] = useState("");
+    const router = useRouter();
 
-    const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i
-    const passwordPattern = /^(?=.*)[0-9a-zA-Z$*&@#]{6,}$/
-
-    const handleRedirect = async (newPath: string) => {
-        location.pathname = newPath;
-    }
+    const emailPattern = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(\.[a-z]+)?$/i;
+    const passwordPattern = /^(?=.*)[0-9a-zA-Z$*&@#]{6,}$/;
 
     const handleFormSubmit = async (formData: any) => {
-        console.log('form data is ', formData);
-        if (!formData.email || !formData.email.length) {
-            setEmailError("Informe um email")
-            return false;
-        }
-        else if (!emailPattern.test(formData.email)) {
-            setEmailError("Informe um email válido")
+        if (!formData.email || !emailPattern.test(formData.email)) {
+            setEmailError("Informe um email válido");
             return false;
         } else {
             setEmailError("");
         }
 
-        if (!formData.password || !formData.password.length) {
-            setPasswordError("Informe uma senha")
-            return false;
-        }
-        else if (!passwordPattern.test(formData.password)) {
-            setPasswordError("A senha precisa de pelo menos 6 caracteres")
+        if (!formData.password || !passwordPattern.test(formData.password)) {
+            setPasswordError("A senha precisa de pelo menos 6 caracteres");
             return false;
         } else {
             setPasswordError("");
         }
 
-        if (!formData.input_confirm_password || !formData.input_confirm_password.length) {
-            setConfirmPasswordError("Confirme a senha")
-            return false;
-        }
-        else if (formData.password != formData.input_confirm_password) {
-            setConfirmPasswordError("As senhas precisam ser iguais")
+        if (formData.password !== formData.input_confirm_password) {
+            setConfirmPasswordError("As senhas precisam ser iguais");
             return false;
         } else {
             setConfirmPasswordError("");
         }
 
-        delete (formData.input_confirm_password)
+        delete formData.input_confirm_password;
 
         try {
-            await usersService.createUser(formData)
-            toast.success('Conta criada com sucesso.')
-            handleRedirect('/success_register');
-        } catch (error) {
-            // toast.error('Ocorreu um erro ao criar a sua conta')
-            return false
+            const response = await usersService.createUser(formData);
+            Cookies.set('refreshToken', response.refreshToken, { expires: 7 });
+            Cookies.set('email', response.email);
+            Cookies.set('group', response.group);
+            toast.success('Conta criada com sucesso.');
+
+            switch (response.group) {
+                case '2':
+                    router.push('/success_register');
+                    break;
+                case '3':
+                    router.push('/create_manager_account');
+                    break;
+                case '4':
+                    router.push('/create_guide_account');
+                    break;
+                default:
+                    break;
+            }
+
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'Ocorreu um erro ao criar a sua conta');
+            return false;
         }
 
         return true;
-    }
+    };
 
     return (
         <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
             <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 -right-2 z-100'>
-                <Image
-                    src="/images/img_abs_01.png"
-                    alt="forma abstrata"
-                    width={200}
-                    height={200}
-                />
+                <Image src="/images/img_abs_01.png" alt="forma abstrata" width={200} height={200} />
             </div>
             <div>
                 <ButtonBack />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
-                <Image
-                    src="/images/penatrilha_logo_w_sf.png"
-                    alt="logo pe na trilha"
-                    width={300}
-                    height={300}
-                />
+                <Image src="/images/penatrilha_logo_w_sf.png" alt="logo pe na trilha" width={300} height={300} />
             </div>
             <div className='col-span-12 lg:col-span-5 grid place-items-center'>
                 <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
             </div>
             <div className="text-center">
-                <Box
-                    component="form"
-                    onSubmit={handleSubmit(handleFormSubmit)}
-                    sx={{ display: 'block', p: 1, m: 1, }}>
+                <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} sx={{ display: 'block', p: 1, m: 1 }}>
                     <div>
                         <TextField
-                            error={emailError && emailError.length ? true : false}
+                            error={!!emailError}
                             label="Email"
                             id="input_email"
                             sx={{ m: 1, width: '35ch' }}
@@ -153,9 +142,7 @@ export default function Register() {
                             select
                             label="Perfil"
                             defaultValue="visitante"
-                            SelectProps={{
-                                native: true,
-                            }}
+                            SelectProps={{ native: true }}
                             variant="standard"
                             required
                             {...register('group')}
@@ -168,10 +155,10 @@ export default function Register() {
                         </TextField>
                     </div>
                     <div>
-                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required >
-                            <InputLabel htmlFor="password" >Senha</InputLabel>
+                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
+                            <InputLabel htmlFor="password">Senha</InputLabel>
                             <Input
-                                error={passwordError && passwordError.length ? true : false}
+                                error={!!passwordError}
                                 id="input_password"
                                 type={showPassword ? 'text' : 'password'}
                                 {...register('password')}
@@ -194,7 +181,7 @@ export default function Register() {
                         <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
                             <InputLabel htmlFor="confirm_password">Confirme a senha</InputLabel>
                             <Input
-                                error={confirmpasswordError && confirmpasswordError.length ? true : false}
+                                error={!!confirmpasswordError}
                                 id="input_confirm_password"
                                 type={showPassword ? 'text' : 'password'}
                                 {...register('input_confirm_password')}
@@ -220,7 +207,6 @@ export default function Register() {
                     <div>
                         <p className="text-[#C1C1C1] z-50">Já tem uma conta?</p>
                         <Link href="../login" underline="hover">FAZER LOGIN</Link>
-
                     </div>
                 </Box>
             </div>

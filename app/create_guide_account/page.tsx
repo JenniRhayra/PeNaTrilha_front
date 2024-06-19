@@ -28,7 +28,7 @@ import { parkService } from '../services/axios-config/connection/park';
 import { IForestType } from '../services/axios-config/connection/types/IForestType';
 import { ISpecialityProps } from '../services/axios-config/connection/types/ISpecialityProps';
 import { IParkProp } from '../services/axios-config/connection/types/IParkProp';
-
+import Cookies from 'js-cookie';
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
@@ -41,8 +41,9 @@ export default function Create_Account() {
 
     const [nameError, setnameError] = useState("");
     const [parkError, setParkError] = useState("");
+    const [getGender, setGender] = useState("");
     const [image, setImage] = useState<any>(null);
-
+    console.log('getGender', getGender)
     const [getLanguages, , loadingLanguages, refetchLanguages] = useQuery(() => guideService.listLanguages(), []);
 
     const languageOptions = (getLanguages || []).map((object: ILanguagesProps) => ({
@@ -68,19 +69,23 @@ export default function Create_Account() {
     const handleFormSubmit = async (guide_data: any) => {
         toast.info('Registrado informações..')
         try {
-            console.log('guide_data', guide_data)
+            // console.log('guide_data', guide_data)
+
+            const email = Cookies.get('email');
+
             const formData = new FormData();
             formData.append('file', image);
 
             formData.append('name', guide_data?.name);
             formData.append('slugname', guide_data?.slugname);
             formData.append('phone', guide_data?.phone);
-            formData.append('gender', guide_data?.gender);
+            formData.append('gender', getGender);
             formData.append('date', guide_data?.date);
             formData.append('espec', JSON.stringify(guide_data?.espec));
             formData.append('select_park', JSON.stringify(guide_data?.select_park));
             formData.append('select_language', JSON.stringify(guide_data?.select_language));
             formData.append('description', guide_data?.description);
+            formData.append('email', email);
 
             await guideService.createGuideAccount(formData)
 
@@ -157,18 +162,21 @@ export default function Create_Account() {
                     </div>
                     <div className='flex flex-col items-center justify-center text-left'>
                         <FormControl required sx={{ m: 2, width: '35ch' }}>
-                            <FormLabel id="gender-id">Sexo</FormLabel>
+                            <FormLabel id="gender">Sexo</FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="buttons"
-                                {...register('gender')}
-                                onChange={(e) => setValue('gender', e.target.value)}
+                                aria-labelledby="gender"
+                                {...register('gender', {
+                                    onChange: (e) => setGender(e.target.value),
+                                })}
                             >
                                 <FormControlLabel value="FEMININO" control={<Radio />} label="feminino" />
                                 <FormControlLabel value="MASCULINO" control={<Radio />} label="masculino" />
                                 <FormControlLabel value="NAO_RESPONDER" control={<Radio />} label="não responder" />
                             </RadioGroup>
                         </FormControl>
+
+
                     </div>
                     <div>
                         <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
