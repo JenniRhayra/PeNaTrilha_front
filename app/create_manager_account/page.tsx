@@ -3,60 +3,53 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import FormControl from '@mui/material/FormControl';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import { useForm } from 'react-hook-form';
-import { useState } from "react";
 import Autocomplete from '@mui/material/Autocomplete';
-import Link from "next/link";
 import Image from 'next/image';
-import ButtonGreen from '../components/buttonGreen';
+import { useForm } from 'react-hook-form';
 import { useQuery } from '../hooks/useQuery';
 import { parkService } from '../services/axios-config/connection/park';
-import { IForestType } from '../services/axios-config/connection/types/IForestType';
-import { toast } from 'react-toastify';
+import { IParkProp } from '../services/axios-config/connection/types/IParkProp';
 import { CPFMask } from '../components/Mask/CpfMask';
 import { RGMask } from '../components/Mask/RgMask';
-import { IParkProp } from '../services/axios-config/connection/types/IParkProp';
+import ButtonGreen from '../components/buttonGreen';
+import { toast } from 'react-toastify';
+import { managerService } from '../services/axios-config/connection';
+import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function CreateParkAccount() {
     const { register, handleSubmit, setValue } = useForm();
-
+    const [inputValue, setInputValue] = React.useState('');
+    const router = useRouter();
     const [getParks, , loadingParks, refetchParks] = useQuery(() => parkService.listParks(), []);
 
     const parkOptions = (getParks || []).map((object: IParkProp) => ({
         value: object.id,
         label: object.park_name,
-    }))
+    }));
 
+    const handleFormSubmit = async (formData: any) => {
+        console.log('formData', formData);
+        console.log('inputValue', inputValue)
+        try {
+            if (inputValue != '') {
+                formData.select_park = [{ value: 0, label: inputValue }]
+            }
+            const cgcValue = formData.cgc.replace(/\D/g, '');
+            const rgValue = formData.rg.replace(/\D/g, '');
+            const email = Cookies.get('email');
 
-    const handleFormSubmit = async (park_data: any) => {
-        // toast.info('Registrado informações do parque..')
-        // try {
-        //     const formData = new FormData();
+            formData.cgc = cgcValue;
+            formData.rg = rgValue;
+            formData.email = email;
+            await managerService.createManagerAccount(formData)
+            toast.success('Dados cadastrados com sucesso. Enviado para aprovação do Administrador.')
 
-        //     formData.append('park_name', park_data?.park_name);
-        //     formData.append('law_number', park_data?.law_number);
-        //     formData.append('cnpj', park_data?.cnpj);
-        //     formData.append('phone', park_data?.phone);
-        //     formData.append('site', park_data?.site);
-        //     formData.append('accept_comment_visitation', park_data?.accept_comment_visitation);
-        //     formData.append('park_comment', park_data?.park_comment);
-        //     formData.append('getParkProps', JSON.stringify(getParkProps?.address_components));
-        //     formData.append('select_forest_type', JSON.stringify(park_data?.select_forest_type));
-
-        //     await parkService.createParkAccount(formData);
-
-        //     toast.success('Parque cadastrado com sucesso.')
-        // } catch (err: any) {
-        //     toast.error(err?.response?.data?.message || 'Erro ao cadastrar o parque')
-        // }
-
+            router.push('/success_register');
+        } catch (err: any) {
+            toast.error(err?.response?.data?.message || 'Ocorreu um erro ao cadastrar os dados');
+        }
     };
-
 
     return (
         <main className="flex flex-col h-screen min-h-screen container mx-auto">
@@ -80,10 +73,6 @@ export default function CreateParkAccount() {
                 <h1 className="text-[#4D5D47] mb-0 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
                 <h1 className="text-[#FFD21D] mb-4 text-xl lg:text-2xl uppercase font-bold text-center">gerente</h1>
             </div>
-            {/* <div className='flex items-center justify-center text-left'>
-                <PhotoUploader setImage={setImage} image_view='figure2' />
-                <h1 className='ml-2'>Selecionar foto</h1>
-            </div> */}
             <div className="text-center bg-[#F8F8F8]">
                 <Box
                     component="form"
@@ -97,7 +86,6 @@ export default function CreateParkAccount() {
                             variant="standard"
                             required
                             autoFocus
-                            // helperText={nameError}
                             InputProps={{
                                 inputComponent: CPFMask as any,
                             }}
@@ -112,7 +100,6 @@ export default function CreateParkAccount() {
                             variant="standard"
                             required
                             autoFocus
-                            // helperText={nameError}
                             InputProps={{
                                 inputComponent: RGMask as any,
                             }}
@@ -122,16 +109,19 @@ export default function CreateParkAccount() {
                     <div className='flex flex-col items-center justify-center'>
                         <Autocomplete
                             sx={{ m: 1, width: '35ch' }}
-                            multiple
                             id="select_park"
+                            multiple
                             loading={loadingParks}
                             options={parkOptions}
                             getOptionLabel={(option: any) => option.label}
                             freeSolo
+                            inputValue={inputValue}
+                            onInputChange={(event, newInputValue) => {
+                                setInputValue(newInputValue);
+                            }}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    required
                                     variant="standard"
                                     label="Nome do parque"
                                     placeholder="Selecionar parque"
@@ -144,17 +134,14 @@ export default function CreateParkAccount() {
                     </div>
                     <div className='flex flex-col items-center justify-start'>
                         <p className='m-1 w-[35ch] text-[#C1C1C1] text-left'>
-                            IMPORTANTE: seu perfil de só será disponibilizado/ativado depois que os dados informados forem analisados pelo administrador. Você receberá um e-mail com a confirmação do cadastro.
+                            IMPORTANTE: seu perfil só será disponibilizado/ativado depois que os dados informados forem analisados pelo administrador. Você receberá um e-mail com a confirmação do cadastro.
                         </p>
                     </div>
                     <div className='mt-10'>
                         <ButtonGreen width='40ch' type='submit'>CADASTRAR</ButtonGreen>
                     </div>
-                    {/* <div>
-                        <Link href="/home" style={{ fontWeight: 'bold', textAlign: 'center' }}>TERMINAR DEPOIS</Link>
-                    </div> */}
                 </Box>
-            </div >
-        </main >
+            </div>
+        </main>
     );
 }
