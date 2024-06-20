@@ -8,7 +8,7 @@ import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { FaCheck } from 'react-icons/fa';
 
 interface Profile {
-  photo: string;
+  photo?: string;
   name: string;
   description?: string;
   language?: string;
@@ -172,19 +172,21 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                   <FaCheck size={20} color="white" />
                 </CheckIcon>
               )}
-              <ListItemAvatar>
-                <ImageWrapper>
-                  <Image src={profile.photo} alt={profile.name} layout="fill" objectFit="cover" />
-                  {showCheckIcon && (
-                    <ImageOverlay>
-                      <HiOutlineBadgeCheck size={20} color="white" />
-                      <Typography component="span" variant="caption">
-                        Visitado
-                      </Typography>
-                    </ImageOverlay>
-                  )}
-                </ImageWrapper>
-              </ListItemAvatar>
+              {profile.photo && (
+                <ListItemAvatar>
+                  <ImageWrapper>
+                    <Image src={profile.photo} alt={profile.name} layout="fill" objectFit="cover" />
+                    {showCheckIcon && (
+                      <ImageOverlay>
+                        <HiOutlineBadgeCheck size={20} color="white" />
+                        <Typography component="span" variant="caption">
+                          Visitado
+                        </Typography>
+                      </ImageOverlay>
+                    )}
+                  </ImageWrapper>
+                </ListItemAvatar>
+              )}
               <ListItemText
                 primary={profile.name}
                 secondary={

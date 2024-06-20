@@ -1,0 +1,31 @@
+.lblProfile {
+    color: #4D5D47;
+    font-weight: 500;
+}
+
+.paragraphProfile{
+    margin-left: 1rem;
+}
+
+.adminContent {
+    display: flex;
+}
+
+.MuiSwitch-thumb {
+    color:#4D5D47;
+}
+
+.css-byenzh-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track {
+    background-color: #7D9662;
+}
+
+.chip {
+    color: white;
+    background-color: #7D9662;
+    margin-left: 3px;
+    margin-top: 3px;
+}
+
+.paragraphProfileHor {
+    margin-left: 1rem;
+}

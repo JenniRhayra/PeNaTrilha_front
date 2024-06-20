@@ -1,20 +1,14 @@
+
 "use client"
 
 import React from 'react';
-import FooterMenu from '../components/footerMenu';
-import Header from '../components/header';
-import '../globals.css';
 
 const Profile: React.FC = () => {
-  return (
-    <div>
-        <Header />
-        <div className='content'> 
-            <h1 className='text-center'>Habemos Profile Page</h1>
+    return(
+        <div> 
+            <p> Perfil que vai chamar os tipos</p>
         </div>
-        <FooterMenu activePage="profile" />
-    </div>
-  );
-};
+    )
 
+}
 export default Profile;

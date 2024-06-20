@@ -1,0 +1,12 @@
+.lblProfile {
+    color: #4D5D47;
+    font-weight: 500;
+}
+
+.paragraphProfile{
+    margin-left: 1rem;
+}
+
+.adminContent {
+    display: flex;
+}
