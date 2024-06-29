@@ -1,13 +1,13 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import styled from 'styled-components';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import CarouselImages from '../components/carroselImages';
 import '../globals.css';
 import GoogleMaps from '../google_maps/page';
-import CustomSkeleton from '../components/customSkeleton';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const SelectorContainer = styled.div`
   display: flex;
@@ -39,15 +39,22 @@ const SelectorDot = styled.div`
 
 const Home: React.FC = () => {
   const [selected, setSelected] = useState<'Parques' | 'Eventos'>('Parques');
+  const [isPending, startTransition] = useTransition();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Simulando um tempo de carregamento
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    const handlePageLoad = () => {
+      startTransition(() => {
+        setLoading(false);
+      });
+    };
 
-    return () => clearTimeout(timer);
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
   }, []);
 
   const parquesData = {
@@ -63,7 +70,7 @@ const Home: React.FC = () => {
       'PE IGUAÇU',
       'IMAGEM DE PARQUE 4',
     ],
-    links:[
+    links: [
       '/content_pages',
       '',
       '',
@@ -79,15 +86,16 @@ const Home: React.FC = () => {
       '/images/pei_at_03.jpg',
     ],
     titles: ['UM DIA NO PARQUE 2024', 'EVENTO 2', 'EVENTO 3', 'EVENTO 4'],
-    links: ['','','','']
+    links: ['', '', '', '']
   };
 
   const selectedData = selected === 'Parques' ? parquesData : eventosData;
 
   return (
     <>
-      {loading && <CustomSkeleton />}
-      {!loading && (
+      {loading || isPending ? (
+          <LoadingSpinner />
+        ) : (
         <div>
           <Header />
           <div className='content' style={{ padding: '20px' }}>

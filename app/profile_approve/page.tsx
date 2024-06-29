@@ -1,14 +1,33 @@
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import ProfileApprove from '../components/profileApprove';
 import Header from '../components/header';
 import FooterMenu from '../components/footerMenu';
 import ButtonBack from '../components/buttonBack';
 import HeaderControl from '../components/headerControl';
 import SearchComponent from '../components/searchComponent';
+import LoadingSpinner from '../components/loadingSpinner';
+
 
 const Home: React.FC = () => {
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handlePageLoad = () => {
+      startTransition(() => {
+        setLoading(false);
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
+  }, []);
 
     const guides = [
         {
@@ -50,16 +69,22 @@ const Home: React.FC = () => {
       ];
 
   return (
-    <div style={{position:'absolute'}}>
-        <Header />
-        <ButtonBack top={'6vh'}/>
-        <SearchComponent title='GUIAS' />
-        <div>
-          <HeaderControl showDelete={true} />
+    <>
+      {loading || isPending ? (
+          <LoadingSpinner />
+        ) : (
+        <div style={{position:'absolute'}}>
+            <Header />
+            <ButtonBack top={'6vh'}/>
+            <SearchComponent title='GUIAS' />
+            <div>
+              <HeaderControl showDelete={true} />
+            </div>
+            <ProfileApprove profile={guides} />
+            <FooterMenu activePage="profile" />
         </div>
-        <ProfileApprove profile={guides} />
-        <FooterMenu activePage="profile" />
-    </div>
+      )}
+    </>
   );
 };
 

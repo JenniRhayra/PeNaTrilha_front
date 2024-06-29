@@ -1,14 +1,32 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import PageHeader from '../components/pageHeaderPromp';
 import FooterMenu from '../components/footerMenu';
 import { FaLocationDot } from "react-icons/fa6";
 import Link from 'next/link';
 import PageComponentList from '../components/pageComponentList';
 import Image from 'next/image';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const ContentPage: React.FC = () => {
-  const [selectedOption, setSelectedOption] = useState('atividade');
+  const [selectedOption, setSelectedOption] = useState('parque');
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handlePageLoad = () => {
+      startTransition(() => {
+        setLoading(false);
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
+  }, []);
 
   const guides = [
     {
@@ -264,16 +282,22 @@ const ContentPage: React.FC = () => {
   };
 
   return (
-    <div>
-      <PageHeader
-        backgroundImageUrl= {image}
-        showCheck={showCheck}
-        title={title}
-      >
-        {renderContent()}
-      </PageHeader>
-      <FooterMenu activePage="search" />
-    </div>
+    <>
+      {loading || isPending ? (
+          <LoadingSpinner />
+        ) : (
+        <div>
+          <PageHeader
+            backgroundImageUrl= {image}
+            showCheck={showCheck}
+            title={title}
+          >
+            {renderContent()}
+          </PageHeader>
+          <FooterMenu activePage="search" />
+        </div>
+      )}
+    </>
   );
 };
 

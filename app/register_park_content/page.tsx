@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import '../globals.css';
@@ -9,8 +9,27 @@ import PageComponentList from '../components/pageComponentList';
 import styled from 'styled-components';
 import HeaderControl from '../components/headerControl';
 import SearchComponent from '../components/searchComponent';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const RegisterContent: React.FC = () => {
+
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handlePageLoad = () => {
+      startTransition(() => {
+        setLoading(false);
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
+  }, []);
 
     const activities = [
         {
@@ -47,14 +66,20 @@ const RegisterContent: React.FC = () => {
     `;
 
     return (
-        <Container>
-            <Header />
-            <ButtonBack top={'6vh'}/>
-            <SearchComponent title='ATIVIDADES' />
-            <HeaderControl showAdd ={true}/>
-            <PageComponentList type={activities} layout='column' showCRUDIcons={true} showViewMoreLink={false} />
-            <FooterMenu activePage="profile" />
-        </Container>
+      <>
+        {loading || isPending ? (
+            <LoadingSpinner />
+          ) : (
+          <Container>
+              <Header />
+              <ButtonBack top={'6vh'}/>
+              <SearchComponent title='ATIVIDADES' />
+              <HeaderControl showAdd ={true}/>
+              <PageComponentList type={activities} layout='column' showCRUDIcons={true} showViewMoreLink={false} />
+              <FooterMenu activePage="profile" />
+          </Container>
+        )}
+      </>
     );
 };
 
