@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import '../globals.css';
@@ -15,6 +15,8 @@ import { IMaskInput } from 'react-imask';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
+import { AppProps } from 'next/app';
+import LoadingSpinner from '../components/loadingSpinner';
 
 
 const CreateParkContent: React.FC = () => {
@@ -22,6 +24,23 @@ const CreateParkContent: React.FC = () => {
     const label = { inputProps: { 'aria-label': 'Monitoramento' } };
     const [titleError, settitleError] = useState("");
     const [selectedOption, setSelectedOption] = useState('dicas');
+    const [isPending, startTransition] = useTransition();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const handlePageLoad = () => {
+          startTransition(() => {
+            setLoading(false);
+          });
+        };
+    
+        if (document.readyState === 'complete') {
+          handlePageLoad();
+        } else {
+          window.addEventListener('load', handlePageLoad);
+          return () => window.removeEventListener('load', handlePageLoad);
+        }
+      }, []);
 
     interface CustomProps {
         onChange: (event: { target: { name: string; value: string } }) => void;
@@ -310,12 +329,18 @@ const CreateParkContent: React.FC = () => {
     };
 
     return (
-        <div>
-            <Header/>
-                {renderContent()}
-            <FooterMenu activePage="profile" />
-        </div>
-        );
+        <>
+            {loading || isPending ? (
+                <LoadingSpinner />
+            ) : (
+                <div>
+                    <Header/>
+                        {renderContent()}
+                    <FooterMenu activePage="profile" />
+                </div>
+            )}
+        </>
+    );
 };
 
 export default CreateParkContent;

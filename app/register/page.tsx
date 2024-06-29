@@ -11,7 +11,7 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import FormControl from '@mui/material/FormControl';
 import FormHelperText from '@mui/material/FormHelperText';
-import { useState } from "react";
+import { useState, useEffect, useTransition } from "react";
 import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from '@mui/material/Link';
@@ -21,6 +21,7 @@ import ButtonGreen from '../components/buttonGreen';
 import ButtonBack from '../components/buttonBack';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const TypeProfile = [
     {
@@ -106,110 +107,134 @@ export default function Register() {
         return true;
     };
 
+    const [isPending, startTransition] = useTransition();
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const handlePageLoad = () => {
+          startTransition(() => {
+            setLoading(false);
+          });
+        };
+    
+        if (document.readyState === 'complete') {
+          handlePageLoad();
+        } else {
+          window.addEventListener('load', handlePageLoad);
+          return () => window.removeEventListener('load', handlePageLoad);
+        }
+      }, []);
+
     return (
-        <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
-            <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 -right-2 z-100'>
-                <Image src="/images/img_abs_01.png" alt="forma abstrata" width={200} height={200} />
-            </div>
-            <div>
-                <ButtonBack />
-            </div>
-            <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
-                <Image src="/images/penatrilha_logo_w_sf.png" alt="logo pe na trilha" width={300} height={300} />
-            </div>
-            <div className='col-span-12 lg:col-span-5 grid place-items-center'>
-                <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
-            </div>
-            <div className="text-center">
-                <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} sx={{ display: 'block', p: 1, m: 1 }}>
-                    <div>
-                        <TextField
-                            error={!!emailError}
-                            label="Email"
-                            id="input_email"
-                            sx={{ m: 1, width: '35ch' }}
-                            variant="standard"
-                            required
-                            autoFocus
-                            helperText={emailError}
-                            {...register('email')}
-                        />
+        <>
+            {loading || isPending ? (
+                <LoadingSpinner />
+            ) : (
+                <main className="flex flex-col h-screen min-h-screen bg-[#F8F8F8] container mx-auto">
+                    <div className='absolute sm:w-50 sm:h-50 w-70 h-70 lg:w-100 lg:h-100 top-0 -right-2 z-100'>
+                        <Image src="/images/img_abs_01.png" alt="forma abstrata" width={200} height={200} />
                     </div>
                     <div>
-                        <TextField
-                            sx={{ m: 1, width: '35ch' }}
-                            id="profile"
-                            select
-                            label="Perfil"
-                            defaultValue="visitante"
-                            SelectProps={{ native: true }}
-                            variant="standard"
-                            required
-                            {...register('group')}
-                        >
-                            {TypeProfile.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.label}
-                                </option>
-                            ))}
-                        </TextField>
+                        <ButtonBack />
                     </div>
-                    <div>
-                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
-                            <InputLabel htmlFor="password">Senha</InputLabel>
-                            <Input
-                                error={!!passwordError}
-                                id="input_password"
-                                type={showPassword ? 'text' : 'password'}
-                                {...register('password')}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                            <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
-                        </FormControl>
+                    <div className='col-span-12 lg:col-span-5 grid place-items-center mt-10'>
+                        <Image src="/images/penatrilha_logo_w_sf.png" alt="logo pe na trilha" width={300} height={300} />
                     </div>
-                    <div>
-                        <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
-                            <InputLabel htmlFor="confirm_password">Confirme a senha</InputLabel>
-                            <Input
-                                error={!!confirmpasswordError}
-                                id="input_confirm_password"
-                                type={showPassword ? 'text' : 'password'}
-                                {...register('input_confirm_password')}
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                            <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
-                        </FormControl>
-                        <p className='text-sm text-left ml-5 text-[#ee4a4a] font-bold'>{confirmpasswordError}</p>
+                    <div className='col-span-12 lg:col-span-5 grid place-items-center'>
+                        <h1 className="text-[#4D5D47] mb-4 text-3xl lg:text-4xl uppercase font-bold text-center">Criar conta</h1>
                     </div>
-                    <div className='my-10'>
-                        <ButtonGreen width='38ch' type='submit'>CADASTRAR</ButtonGreen>
+                    <div className="text-center">
+                        <Box component="form" onSubmit={handleSubmit(handleFormSubmit)} sx={{ display: 'block', p: 1, m: 1 }}>
+                            <div>
+                                <TextField
+                                    error={!!emailError}
+                                    label="Email"
+                                    id="input_email"
+                                    sx={{ m: 1, width: '35ch' }}
+                                    variant="standard"
+                                    required
+                                    autoFocus
+                                    helperText={emailError}
+                                    {...register('email')}
+                                />
+                            </div>
+                            <div>
+                                <TextField
+                                    sx={{ m: 1, width: '35ch' }}
+                                    id="profile"
+                                    select
+                                    label="Perfil"
+                                    defaultValue="visitante"
+                                    SelectProps={{ native: true }}
+                                    variant="standard"
+                                    required
+                                    {...register('group')}
+                                >
+                                    {TypeProfile.map((option) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
+                                </TextField>
+                            </div>
+                            <div>
+                                <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
+                                    <InputLabel htmlFor="password">Senha</InputLabel>
+                                    <Input
+                                        error={!!passwordError}
+                                        id="input_password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        {...register('password')}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                    <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
+                                </FormControl>
+                            </div>
+                            <div>
+                                <FormControl sx={{ m: 1, width: '35ch' }} variant="standard" required>
+                                    <InputLabel htmlFor="confirm_password">Confirme a senha</InputLabel>
+                                    <Input
+                                        error={!!confirmpasswordError}
+                                        id="input_confirm_password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        {...register('input_confirm_password')}
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label="toggle password visibility"
+                                                    onClick={handleClickShowPassword}
+                                                    onMouseDown={handleMouseDownPassword}
+                                                >
+                                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                    <FormHelperText>Deve conter no mínimo 6 caracteres</FormHelperText>
+                                </FormControl>
+                                <p className='text-sm text-left ml-5 text-[#ee4a4a] font-bold'>{confirmpasswordError}</p>
+                            </div>
+                            <div className='my-10'>
+                                <ButtonGreen width='38ch' type='submit'>CADASTRAR</ButtonGreen>
+                            </div>
+                            <div>
+                                <p className="text-[#C1C1C1] z-50">Já tem uma conta?</p>
+                                <Link href="../login" underline="hover">FAZER LOGIN</Link>
+                            </div>
+                        </Box>
                     </div>
-                    <div>
-                        <p className="text-[#C1C1C1] z-50">Já tem uma conta?</p>
-                        <Link href="../login" underline="hover">FAZER LOGIN</Link>
-                    </div>
-                </Box>
-            </div>
-        </main>
+                </main>
+            )}
+        </>
     );
 }

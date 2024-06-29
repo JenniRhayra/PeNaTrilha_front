@@ -1,6 +1,6 @@
 "use client"
 
-import React from 'react';
+import React, { useState, useEffect, useTransition } from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import '../globals.css';
@@ -9,8 +9,27 @@ import SearchComponent from '../components/searchComponent';
 import { IoMdAddCircle } from "react-icons/io";
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
+import LoadingSpinner from '../components/loadingSpinner';
 
 const Visited: React.FC = () => {
+  const [isPending, startTransition] = useTransition();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const handlePageLoad = () => {
+      startTransition(() => {
+        setLoading(false);
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
+  }, []);
+
   const parks = [
     {
       photo: '/images/parque-carlos-botelho.jpg',
@@ -46,18 +65,24 @@ const Visited: React.FC = () => {
   `;
 
   return (
-    <div>
-      <Header />
-      <SearchComponent title='PARQUES VISITADOS'/>
-      <div style={{ paddingTop: '30vh' }}>
-        <PageComponentList type={parks} layout='column' showCheckIcon={true} />
-      </div>
-      <AddIconContainer onClick={handleAddClick}>
-        <IoMdAddCircle size={50} color="#7D9662"/>
-        <AddText>Adicionar mais parques</AddText>
-      </AddIconContainer>
-      <FooterMenu activePage="visited" />
-    </div>
+    <>
+      {loading || isPending ? (
+          <LoadingSpinner />
+        ) : (
+          <div>
+            <Header />
+            <SearchComponent title='PARQUES VISITADOS'/>
+            <div style={{ paddingTop: '30vh' }}>
+              <PageComponentList type={parks} layout='column' showCheckIcon={true} />
+            </div>
+            <AddIconContainer onClick={handleAddClick}>
+              <IoMdAddCircle size={50} color="#7D9662"/>
+              <AddText>Adicionar mais parques</AddText>
+            </AddIconContainer>
+            <FooterMenu activePage="visited" />
+          </div>
+        )}
+    </>
   );
 };
 

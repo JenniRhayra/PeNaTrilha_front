@@ -3,8 +3,13 @@
 @tailwind utilities;
 
 body {
-    background: #F8F8F8
+    background: #F8F8F8;
+    transition: opacity 0.25s ease-in-out;
 }
+
+.loading body {
+    opacity: 0.5;
+  }
 
 .body_green {
     background: #7D9662
