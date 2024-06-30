@@ -2,16 +2,28 @@
 
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
-import { Chip } from '@mui/material';
+import { Chip, Input } from '@mui/material';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Divider } from '@mui/material';
 import Button from '@mui/material/Button';
-import {Switch, FormGroup, FormControlLabel} from '@mui/material';
 import Image from 'next/image';
 import './profile.css';
 import PageComponentList from '../components/pageComponentList';
 import Link from 'next/link';
+import {TextField} from '@mui/material';
+import { Box } from '@mui/material';
+import { PhoneMask } from '../components/Mask/PhoneMask';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import { useForm } from 'react-hook-form';
+import FormLabel from '@mui/material/FormLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import ButtonGreen from '../components/buttonGreen';
+import {Dialog, DialogTitle, DialogContent, DialogActions} from '@mui/material';
+
 
 
 interface IAdminProfile {
@@ -147,8 +159,50 @@ const SelectorDot = styled.div`
   left: 50%;
   transform: translateX(-50%);`;
 
-const ManagerProfile: React.FC = () => {
+const ButtonCancel = styled(ButtonGreen)`
+  color: #EF2945;
+  background-color: #fff;
+  border: 1px solid #EF2945;
+  &:hover {
+    background-color: #EF2945;
+    color: #fff;
+  }
+`;
+  
+const ButtonGreenM = styled(ButtonGreen)`
+  margin-left: 1rem;
+`;
+
+
+const AdminProfile: React.FC = () => {
     const [selected, setSelected] = useState<'Geral' | 'Admin'>('Geral');
+    const [isEditable, setEditable] = useState(false);
+    const { register, handleSubmit, setValue } = useForm()
+    const [getGender, setGender] = useState("");
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+    const habilitarCamposEdicao = (event: React.MouseEvent<HTMLButtonElement>) => {
+      setEditable(true);
+    };
+
+    const handleRedirect = async (newPath: string) => {
+      location.pathname = newPath;
+    };
+    
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  const handleConfirmDelete = () => {
+      console.log("Sua conta foi excluída com sucesso!");
+      setOpenDeleteDialog(false);
+      handleRedirect("/login");
+  };
+
+  const handleDeleteAccount = () => {
+    setOpenDeleteDialog(true);
+  };
+
 
     return (
         <div>
@@ -190,31 +244,110 @@ const ManagerProfile: React.FC = () => {
                                     alt="forma abstrata esquerda"
                                     width={20}
                                     height={20}
+                                    onClick={habilitarCamposEdicao}
                                 />
                             </Button>
                             </div>    
                         </div>
-                        <div id='emailContent' style={{display:'flex'}}>
-                            <label htmlFor='email' className='lblProfile'> E-mail: </label> 
-                            <p id='email' className='paragraphProfile'>joaovitor08@gmail.com</p>
-                        </div>
-                        <div id='phoneContent' style={{display:'flex'}}>
-                            <label htmlFor='phone' className='lblProfile'> Telefone: </label>
-                            <p id='phone' className='paragraphProfile'> (15) 99148-0456</p>
-                        </div>
-                        <div id='genderContent' style={{display:'flex'}}>
-                            <label htmlFor='gender' className='lblProfile'> Gênero: </label>
-                            <p id='gender' className='paragraphProfile'>Masculino</p>
-                        </div>
-                        <div id='genderContent' style={{marginTop:'2rem'}}>
-                            <div>
-                                <Link href='#' style={{color:'#4D5D47', textDecoration:'underline'}}> Redefinir Senha </Link> <br></br>
+                        {isEditable == true && (
+                        <div id = 'EditContent'>
+                          <Box>
+                          <div>
+                              <TextField 
+                                  label="Nome"
+                                  id="input_name"
+                                  sx={{ m: 1, width: '35ch' }}
+                                  variant="standard"
+                                  autoFocus  
+                                  defaultValue={'João Vitor'}
+                                />
                             </div>
-                            <div style={{marginTop:'1rem'}}>
-                                <Link href='#' style={{color:'red'}}> Excluir Conta </Link>
-                            </div>   
-                        </div>    
-                    </div>
+                            <div>
+                              <TextField 
+                                  label="Email"
+                                  id="input_email"
+                                  sx={{ m: 1, width: '35ch' }}
+                                  variant="standard"  
+                                  defaultValue={'joaovitor08@gmail.com'}
+                                />
+                            </div> 
+                            <div>
+                              <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
+                                <InputLabel htmlFor="formatted-phone-mask-input">Telefone</InputLabel>
+                                  <Input
+                                    //name="phonemask"
+                                    id="phone"
+                                    {...register('phone')}
+                                    inputComponent={PhoneMask as any}
+                                  />
+                              </FormControl>
+                            </div>  
+                            <div>
+                                <FormControl required sx={{ m: 1, width: '35ch' }}>
+                                    <FormLabel id="gender">Sexo</FormLabel>
+                                    <RadioGroup
+                                        row
+                                        aria-labelledby="gender"
+                                        {...register('gender', {
+                                            onChange: (e) => setGender(e.target.value),
+                                        })}
+                                    >
+                                        <FormControlLabel value="FEMININO" control={<Radio />} label="feminino" />
+                                        <FormControlLabel value="MASCULINO" control={<Radio />} label="masculino" />
+                                        <FormControlLabel value="NAO_RESPONDER" control={<Radio />} label="não responder" />
+                                    </RadioGroup>
+                                </FormControl>
+                            </div>
+                            <div className='flex'>
+                              <ButtonCancel width='20ch' onClick={() => handleRedirect('/admin_profile')}>CANCELAR</ButtonCancel>
+                              <ButtonGreenM width='20ch' type='submit'>SALVAR</ButtonGreenM>
+                            </div>
+                           
+                          </Box>  
+                        </div>
+                        )}
+
+                        {isEditable == false && (
+                        <div id='GeralContent'>
+                          <div id='emailContent' style={{display:'flex'}}>
+                              <label htmlFor='email' className='lblProfile'> E-mail: </label> 
+                              <p id='email' className='paragraphProfile'>joaovitor08@gmail.com</p>
+                          </div>
+                          <div id='phoneContent' style={{display:'flex'}}>
+                              <label htmlFor='phone' className='lblProfile'> Telefone: </label>
+                              <p id='phone' className='paragraphProfile'> (15) 99148-0456</p>
+                          </div>
+                          <div id='genderContent' style={{display:'flex'}}>
+                              <label htmlFor='gender' className='lblProfile'> Gênero: </label>
+                              <p id='gender' className='paragraphProfile'>Masculino</p>
+                          </div>
+                          <div id='genderContent' style={{marginTop:'2rem'}}>
+                              <div>
+                                  <Link href='/forgot_password' style={{color:'#4D5D47', textDecoration:'underline'}}> Redefinir Senha </Link> <br></br>
+                              </div>
+                              <div style={{marginTop:'1rem'}}>
+                              <ButtonCancel width='20ch' onClick={() => handleDeleteAccount()}>EXCLUIR CONTA </ButtonCancel>
+                              </div>   
+                          </div> 
+
+                          <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+                            <DialogTitle>Confirmação de Exclusão</DialogTitle>
+                            <DialogContent>
+                              Tem certeza que deseja excluir sua conta?
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseDeleteDialog} color="primary">
+                                Não
+                              </Button>
+                              <Button onClick={handleConfirmDelete} color="primary">
+                                Sim
+                              </Button>
+                            </DialogActions>
+                        </Dialog> 
+                        </div> 
+                        )}   
+
+                    </div>  
                 </>
                 )}
                 {selected?.toString() == 'Admin' && (
@@ -285,4 +418,4 @@ const ManagerProfile: React.FC = () => {
     )
 }
 
-export default ManagerProfile;
+export default AdminProfile;
