@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Cookies from 'js-cookie';
-import { API_URL } from '@/app/settings';
+import { API_URL } from '../../settings';
 import { useRouter } from 'next/router';
 
 const api = axios.create({

@@ -1,17 +1,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import styled from 'styled-components';
-
+import { IListManyParksInfo } from '../services/axios-config/connection/types/IListManyParksInfo';
+import { useRouter } from 'next/navigation'
 interface CarouselProps {
-  images: string[];
-  titles: string[];
-  links: string[]
+  getParks: any;
   imageWidth: number;
   imageHeight: number;
   borderRadius: number;
   imageSpacing: number;
+  loading: boolean;
+  selected: string;
 }
 
 const CarouselContainer = styled.div`
@@ -91,12 +92,36 @@ const ArrowButton = styled.button<{ left?: boolean }>`
   z-index: 1;
 `;
 
-const CarouselImages: React.FC<CarouselProps> = ({ images, titles, links, imageWidth, imageHeight, borderRadius, imageSpacing }) => {
+const LoadingSpinner = styled.div`
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+
+  @keyframes spin {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+`;
+
+const CarouselImages = ({ imageWidth, imageHeight, borderRadius, imageSpacing, getParks, loading = true, selected = 'Parques' }: CarouselProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchX, setTouchX] = useState<number | null>(null);
-
+  const router = useRouter()
+  console.log('getParks', getParks)
   const handleNext = () => {
-    if (currentIndex < images.length - 1) {
+    if (currentIndex < getParks?.id?.length - 1) {
       setCurrentIndex(prevIndex => prevIndex + 1);
     }
   };
@@ -112,45 +137,58 @@ const CarouselImages: React.FC<CarouselProps> = ({ images, titles, links, imageW
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-  if (touchX !== null) {
-    const touchMoveX = e.touches[0].clientX;
-    const imagesMoved = Math.round((touchX - touchMoveX) / (imageWidth + imageSpacing));
-    setCurrentIndex(prevIndex => Math.max(0, Math.min(prevIndex + imagesMoved, images.length - 1)));
-  }
-};
+    if (touchX !== null) {
+      const touchMoveX = e.touches[0].clientX;
+      const imagesMoved = Math.round((touchX - touchMoveX) / (imageWidth + imageSpacing));
+      setCurrentIndex(prevIndex => Math.max(0, Math.min(prevIndex + imagesMoved, getParks?.id?.length - 1)));
+    }
+  };
 
   const handleTouchEnd = () => {
     setTouchX(null);
   };
-
   return (
-    <CarouselContainer
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {currentIndex > 0 && (
-        <ArrowButton left onClick={handlePrev}>
-          <FiArrowLeft size={30} color="white" />
-        </ArrowButton>
-      )}
-      <ImageList translateX={-currentIndex * (imageWidth + imageSpacing)}>
-        {images.map((src, index) => (
-          <ImageWrapper key={index} imageWidth={imageWidth} imageHeight={imageHeight} imageSpacing={imageSpacing} borderRadius={borderRadius}>
-            <Link href={links[index]}>
-              <Image src={src} alt={`Image ${index + 1}`} width={imageWidth} height={imageHeight} />
-            </Link>
-            <ImageTitle>{titles[index]}</ImageTitle>
-          </ImageWrapper>
-        ))}
-      </ImageList>
-      {currentIndex < images.length - 1 && (
-        <ArrowButton onClick={handleNext}>
-          <FiArrowRight size={30} color="white" />
-        </ArrowButton>
-      )}
-    </CarouselContainer>
+    <>
+      <CarouselContainer
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {loading && <LoadingSpinner />}
+        {currentIndex > 0 && (
+          <ArrowButton left onClick={handlePrev}>
+            <FiArrowLeft size={30} color="white" />
+          </ArrowButton>
+        )}
+        <ImageList translateX={-currentIndex * (imageWidth + imageSpacing)}>
+          {getParks?.id?.map((park: any, index: number) => (
+            <ImageWrapper
+              key={index}
+              imageWidth={imageWidth}
+              imageHeight={imageHeight}
+              imageSpacing={imageSpacing}
+              borderRadius={borderRadius}
+            >
+              <Image
+                src={getParks?.images?.[index] ?? ''}
+                alt={`Image ${index + 1}`}
+                width={imageWidth}
+                height={imageHeight}
+                onClick={() => router.push(getParks?.navigate?.[index])}
+              />
+              <ImageTitle>{getParks?.titles?.[index]}</ImageTitle>
+            </ImageWrapper>
+          ))}
+        </ImageList>
+        {currentIndex < (getParks?.id?.length - 1) && (
+          <ArrowButton onClick={handleNext}>
+            <FiArrowRight size={30} color="white" />
+          </ArrowButton>
+        )}
+      </CarouselContainer>
+    </>
   );
+
 };
 
 export default CarouselImages;

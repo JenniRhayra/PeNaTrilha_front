@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:force": "NEXT_IGNORE_TYPE_CHECKS=true next build"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

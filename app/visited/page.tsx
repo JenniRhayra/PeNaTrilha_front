@@ -9,20 +9,19 @@ import SearchComponent from '../components/searchComponent';
 import { IoMdAddCircle } from "react-icons/io";
 import styled from 'styled-components';
 import { useRouter } from 'next/navigation';
-
+import { usersService } from '../services/axios-config/connection';
+import Cookies from 'js-cookie';
+import { useQuery } from '../hooks/useQuery';
 const Visited: React.FC = () => {
-  const parks = [
-    {
-      photo: '/images/parque-carlos-botelho.jpg',
-      name: 'PE Carlos Botelho',
-      link: '/content_pages',
-    },
-    {
-      photo: '/images/intervales.jpg',
-      name: 'PE Intervales',
-      link: 'prk/002',
-    },
-  ];
+
+  const userId = Cookies.get('id');
+  const [getParks, , loadingParks, refetchParks] = useQuery(() => usersService.listParkVisit(Number(userId)), [userId]);
+
+  const parks = (getParks || []).map((object: any, index: number) => ({
+    photo: object?.park?.parkImage,
+    name: object?.park?.park_name,
+    link: `/content_pages/${object?.park?.id}`,
+  }));
 
   const router = useRouter();
 
@@ -48,12 +47,12 @@ const Visited: React.FC = () => {
   return (
     <div>
       <Header />
-      <SearchComponent title='PARQUES VISITADOS'/>
+      <SearchComponent title='PARQUES VISITADOS' />
       <div style={{ paddingTop: '30vh' }}>
         <PageComponentList type={parks} layout='column' showCheckIcon={true} />
       </div>
       <AddIconContainer onClick={handleAddClick}>
-        <IoMdAddCircle size={50} color="#7D9662"/>
+        <IoMdAddCircle size={50} color="#7D9662" />
         <AddText>Adicionar mais parques</AddText>
       </AddIconContainer>
       <FooterMenu activePage="visited" />

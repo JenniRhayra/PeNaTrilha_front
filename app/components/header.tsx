@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { FaSearch, FaUserCircle } from 'react-icons/fa';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Cookies from 'js-cookie';
 
 const Header: React.FC = () => {
 
@@ -29,12 +30,16 @@ const Header: React.FC = () => {
     };
 
     const handleLogoutRedirect = () => {
+        Cookies.remove('id')
+        Cookies.remove('email')
+        Cookies.remove('group')
+        Cookies.remove('refreshToken')
         handleRedirect(logoutPath);
     };
-    
+
 
     return (
-        <header className="header" style={{background: '#F8F8F8', zIndex: 1}}>
+        <header className="header" style={{ background: '#F8F8F8', zIndex: 1 }}>
             <div className="logo">
                 <Image
                     src="/images/penatrilha_logo_w_sf.png"
@@ -49,7 +54,7 @@ const Header: React.FC = () => {
                     <FaSearch />
                 </Link>
                 <Link href="#">
-                    <FaUserCircle onClick={handleMenuOptions} />
+                    <FaUserCircle onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleMenuOptions(e)} />
                     <Menu
                         id="lock-menu"
                         anchorEl={anchorEl}
@@ -59,15 +64,15 @@ const Header: React.FC = () => {
                             'aria-labelledby': 'lock-button',
                             role: 'listbox',
                         }}
-                        >
-                            <MenuItem onClick={handleProfileRedirect}>
-                                
-                                Meu Perfil 
-                            </MenuItem>
-                            <MenuItem onClick={handleLogoutRedirect} style={{color: 'red'}}>
-                                Logout 
-                            </MenuItem>
-                      
+                    >
+                        <MenuItem onClick={handleProfileRedirect}>
+
+                            Meu Perfil
+                        </MenuItem>
+                        <MenuItem onClick={handleLogoutRedirect} style={{ color: 'red' }}>
+                            Logout
+                        </MenuItem>
+
                     </Menu>
                 </Link>
             </div>

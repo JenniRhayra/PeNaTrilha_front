@@ -16,6 +16,7 @@ import ButtonGreen from '../components/buttonGreen';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import { authService } from '../services/axios-config/connection';
 import ButtonBack from '../components/buttonBack';
+import Cookies from 'js-cookie';
 
 const toastId = 'fetched-nationalities';
 
@@ -56,7 +57,13 @@ export default function Login() {
         user.password = password
 
         try {
-            await authService.authenticateWithPassword(user)
+            const data = await authService.authenticateWithPassword(user)
+
+            Cookies.set('refreshToken', data.token, { expires: 7 });
+            Cookies.set('email', data.email);
+            Cookies.set('id', String(data.id));
+            Cookies.set('group', String(data.group));
+
             toast.success('Conta logada com sucesso.');
             handleRedirect('/home')
         } catch (err: any) {
@@ -77,12 +84,12 @@ export default function Login() {
                 />
             </div>
             <div>
-                <ButtonBack/>
+                <ButtonBack />
             </div>
             <div className='items-center justify-center '>
                 <div className='col-span-12 lg:col-span-5 grid place-items-center px-10'>
                     <Image
-                        src="/images/penatrilha_logo_w.png" 
+                        src="/images/penatrilha_logo_w.png"
                         alt="logo pe na trilha"
                         width={400}
                         height={400}
@@ -125,6 +132,14 @@ export default function Login() {
                             onChange={(e) => handleChangePassword(e)}
                         />
                     </div>
+
+                    <div className='flex flex-col justify-end'>
+                        <div>{' '}</div>
+                        <p className='mb-4 w-[35ch] text-[#C1C1C1] text-right text-base'>
+                            Esqueceu a senha? <Link href="./forgot_password">{' '}Clique aqui</Link>
+                        </p>
+                    </div>
+
                     <div>
                         <ButtonGreen width='38ch' onClick={() => onsubmitHandle()} href='#'>ENTRAR</ButtonGreen>
                     </div>

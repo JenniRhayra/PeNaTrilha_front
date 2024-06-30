@@ -1,10 +1,22 @@
 import { api } from "..";
+import { ILoginReturn } from "./types/IAuthProps";
+import { IGetGuide } from "./types/IGetGuide";
 import { ILanguagesProps } from "./types/ILanguagesProps";
 
 export class GuideService {
-    async createGuideAccount(formData: FormData): Promise<void> {
+    async createGuideAccount(formData: FormData): Promise<ILoginReturn> {
 
-        await api.post(`/guide/create-account`, formData);
+        return await api.post(`/guide/create-account`, formData);
+    }
+
+    async getGuideByParkIdAndGuideId(parkId: number, guideId: number): Promise<IGetGuide> {
+
+        return await api.get(`/guide/get-guide/${parkId}/${guideId}`);
+    }
+
+    async getGuideProfile(userId: number): Promise<IGetGuide> {
+
+        return await api.get(`/guide/get-guide-profile/${userId}`);
     }
 
     async listLanguages(): Promise<ILanguagesProps[]> {

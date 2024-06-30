@@ -1,31 +1,22 @@
-'use client'
+'use client';
 
-import {
-    useLoadScript,
-    GoogleMap,
-    MarkerF,
-    CircleF,
-} from '@react-google-maps/api';
-import type { NextPage } from 'next';
+import { useLoadScript, GoogleMap, MarkerF, CircleF } from '@react-google-maps/api';
 import { useMemo, useState, useEffect } from 'react';
-import usePlacesAutocomplete, {
-    getGeocode,
-    getLatLng,
-} from 'use-places-autocomplete';
+import usePlacesAutocomplete, { getGeocode, getLatLng } from 'use-places-autocomplete';
 import styles from './google_maps.module.css';
 import { FaLocationDot } from 'react-icons/fa6';
 
 interface GoogleMapsProps {
-    showMap?: boolean;
+    showMap?: boolean; // Definindo como opcional com valor padrão
 }
 
-const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false}) => {
+const GoogleMaps: React.FC<GoogleMapsProps> = ({ showMap = false }) => {
     const [lat, setLat] = useState(0);
     const [lng, setLng] = useState(0);
     const [loading, setLoading] = useState(true);
 
     const libraries = useMemo(() => ['places'], []);
-    const mapCenter = useMemo(() => ({ lat: lat, lng: lng }), [lat, lng]);
+    const mapCenter = useMemo(() => ({ lat, lng }), [lat, lng]);
 
     const mapOptions = useMemo<google.maps.MapOptions>(
         () => ({
@@ -69,7 +60,7 @@ const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false}) => {
             <div className={styles.sidebar}>
                 <PlacesAutocomplete
                     onAddressSelect={(address) => {
-                        getGeocode({ address: address }).then((results) => {
+                        getGeocode({ address }).then((results) => {
                             const { lat, lng } = getLatLng(results[0]);
                             setLat(lat);
                             setLng(lng);
@@ -84,19 +75,15 @@ const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false}) => {
                     center={mapCenter}
                     mapTypeId={google.maps.MapTypeId.ROADMAP}
                     mapContainerStyle={{ width: '100%', height: '150px' }}
-                    onLoad={(map) => console.log('Map Loaded')}
+                    onLoad={() => console.log('Map Loaded')}
                 >
-                    <MarkerF
-                        position={mapCenter}
-                        onLoad={() => console.log('Marker Loaded')}
-                    />
-
+                    <MarkerF position={mapCenter} onLoad={() => console.log('Marker Loaded')} />
                     {[400, 1000].map((radius, idx) => (
                         <CircleF
                             key={idx}
                             center={mapCenter}
                             radius={radius}
-                            onLoad={() => console.log('Circle Load...')}
+                            onLoad={() => console.log('Circle Loaded')}
                             options={{
                                 fillColor: radius > 400 ? 'red' : 'green',
                                 strokeColor: radius > 400 ? 'red' : 'green',
@@ -110,10 +97,8 @@ const GoogleMaps: NextPage<GoogleMapsProps> = ({ showMap = false}) => {
     );
 };
 
-const PlacesAutocomplete = ({
+const PlacesAutocomplete: React.FC<{ onAddressSelect?: (address: string) => void }> = ({
     onAddressSelect,
-}: {
-    onAddressSelect?: (address: string) => void;
 }) => {
     const {
         ready,
@@ -129,11 +114,7 @@ const PlacesAutocomplete = ({
 
     const renderSuggestions = () => {
         return data.map((suggestion: any) => {
-            const {
-                place_id,
-                structured_formatting: { main_text, secondary_text },
-                description,
-            } = suggestion;
+            const { place_id, structured_formatting: { main_text, secondary_text }, description } = suggestion;
 
             return (
                 <li

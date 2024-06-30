@@ -8,6 +8,9 @@ import CarouselImages from '../components/carroselImages';
 import '../globals.css';
 import GoogleMaps from '../google_maps/page';
 import CustomSkeleton from '../components/customSkeleton';
+import { useQuery } from '../hooks/useQuery';
+import { parkService } from '../services/axios-config/connection/park';
+import { Park, Event } from '../services/axios-config/connection/types/IListManyParksInfo';
 
 const SelectorContainer = styled.div`
   display: flex;
@@ -39,83 +42,81 @@ const SelectorDot = styled.div`
 
 const Home: React.FC = () => {
   const [selected, setSelected] = useState<'Parques' | 'Eventos'>('Parques');
-  const [loading, setLoading] = useState(true);
+  const [selectedData, setSelectedData] = useState<any>();
+  const [getParks, , loadingParks, refetchParks] = useQuery(() => parkService.listManyParkInfo(), []);
+  const [parquesData, setParquesData] = useState({
+    id: [],
+    images: [],
+    titles: [],
+    links: [],
+    navigate: []
+  });
+
+  const [eventosData, setEventosData] = useState({
+    id: [],
+    images: [],
+    titles: [],
+    links: ['', '', '', ''],
+    navigate: []
+  });
 
   useEffect(() => {
-    // Simulando um tempo de carregamento
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 5000);
+    if (!loadingParks) {
+      setParquesData({
+        id: getParks?.park?.map((park: Park) => park?.id),
+        images: getParks?.park?.map((park: Park) => park?.parkImage),
+        titles: getParks?.park?.map((park: Park) => park?.park_name),
+        links: getParks?.park?.map((park: Park) => park?.site),
+        navigate: getParks?.park?.map((park: Park) => `/content_pages/${park?.id}`),
+      });
+      setEventosData({
+        id: getParks?.park?.map((park: Park) => park?.events?.map((event: Event) => event?.id)),
+        images: getParks?.park?.map((park: Park) => (park?.events?.map((event: Event) => event?.eventImage))?.[0]),
+        titles: getParks?.park?.map((park: Park) => park?.events?.map((event: Event) => event?.event_name)),
+        links: [],
+        navigate: getParks?.park?.map((park: Park) => park?.events?.map((event: Event) => `/content_pages/${park?.id}/events/${event?.id}`)?.[0]),
+      });
+    }
+  }, [getParks, loadingParks]);
 
-    return () => clearTimeout(timer);
-  }, []);
+  useEffect(() => {
+    setSelectedData(selected == 'Parques' ? parquesData : eventosData)
+  }, [selected, eventosData, parquesData])
 
-  const parquesData = {
-    images: [
-      '/images/parque-carlos-botelho.jpg',
-      '/images/intervales.jpg',
-      '/images/parque-iguacu.jpg',
-      '/images/parque-carlos-botelho.jpg',
-    ],
-    titles: [
-      'PE CARLOS BOTELHO',
-      'PE INTERVALES',
-      'PE IGUAÇU',
-      'IMAGEM DE PARQUE 4',
-    ],
-    links:[
-      '/content_pages',
-      '',
-      '',
-      ''
-    ]
-  };
 
-  const eventosData = {
-    images: [
-      '/images/at01.jpeg',
-      '/images/pei_at_01.jpeg',
-      '/images/pei_at_02.jpeg',
-      '/images/pei_at_03.jpg',
-    ],
-    titles: ['UM DIA NO PARQUE 2024', 'EVENTO 2', 'EVENTO 3', 'EVENTO 4'],
-    links: ['','','','']
-  };
-
-  const selectedData = selected === 'Parques' ? parquesData : eventosData;
 
   return (
     <>
-      {loading && <CustomSkeleton />}
-      {!loading && (
+      {loadingParks && <CustomSkeleton />}
+      {!loadingParks && (
         <div>
           <Header />
           <div className='content' style={{ padding: '20px' }}>
-            <h1 style={{textAlign: 'center', fontWeight: 'bold', color: '#7D9662', fontSize:'20px'}}>BORA COMEÇAR?</h1>
-            <div style={{alignItems: 'center'}}>
-              <GoogleMaps showMap={false}/>
+            <h1 style={{ textAlign: 'center', fontWeight: 'bold', color: '#7D9662', fontSize: '20px' }}>BORA COMEÇAR?</h1>
+            <div style={{ alignItems: 'center' }}>
+              <GoogleMaps showMap={false} />
             </div>
             <SelectorContainer>
-              <SelectorItem isActive={selected === 'Parques'} onClick={() => setSelected('Parques')}>
+              <SelectorItem isActive={selected == 'Parques'} onClick={() => setSelected('Parques')}>
                 PARQUES
                 {selected === 'Parques' && <SelectorDot />}
               </SelectorItem>
-              <SelectorItem isActive={selected === 'Eventos'} onClick={() => setSelected('Eventos')}>
+              <SelectorItem isActive={selected == 'Eventos'} onClick={() => setSelected('Eventos')}>
                 EVENTOS
                 {selected === 'Eventos' && <SelectorDot />}
               </SelectorItem>
             </SelectorContainer>
             <CarouselImages
-              images={selectedData.images}
-              titles={selectedData.titles}
-              links={selectedData.links}
+              loading={loadingParks}
               imageWidth={200}
               imageHeight={350}
               borderRadius={30}
               imageSpacing={20}
+              getParks={selectedData}
+              selected={selected}
             />
           </div>
-          <div style={{paddingBottom: '50px'}}></div>
+          <div style={{ paddingBottom: '50px' }}></div>
           <FooterMenu activePage="home" />
         </div>
       )}

@@ -3,17 +3,23 @@ import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiShare2 } from 'react-icons/fi';
 import { FaCheck } from 'react-icons/fa';
 import ShareOnWhatsApp from '../components/shareWhatsapp';
+import { usersService } from '../services/axios-config/connection';
+import Cookies from 'js-cookie';
+import { toast } from 'react-toastify';
 
 interface PageHeaderProps {
   backgroundImageUrl: string;
   title: string;
   children: ReactNode;
   showCheck?: boolean;
+  parkId: number;
+  visited: boolean;
 }
 
-const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, children, showCheck = false }) => {
+const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, children, showCheck = false, parkId, visited = false }) => {
   const [share, setShare] = useState(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(visited);
+
   const router = useRouter();
 
   const handleGoBack = () => {
@@ -24,15 +30,24 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
     setShare(true);
   };
 
-  const handleCheckClick = () => {
-    setChecked(!checked);
+  const handleCheckClick = async () => {
+    try {
+      const email = Cookies.get('email');
+
+      await usersService.updateParkVisit(parkId, String(email))
+
+      setChecked((prev) => !prev);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || "Erro ao atualizar o parque visitado.")
+    }
+
   };
 
   // Função para converter o conteúdo dos filhos para string com formatação
   const getTextFromChildren = (children: ReactNode): string => {
     let isFirstSubtitle = true; // Flag para controlar se é o primeiro subtítulo
     let formattedText = ''; // String formatada
-  
+
     const traverseChildren = (child: ReactNode) => {
       if (typeof child === 'string') {
         formattedText += child.trim();
@@ -41,7 +56,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       } else if (React.isValidElement(child)) {
         const element = child as React.ReactElement;
         const { children: nestedChildren, className } = element.props || {};
-  
+
         if (className === 'subtitles_content') {
           if (isFirstSubtitle) {
             // Adiciona um espaço antes do primeiro subtítulo
@@ -61,11 +76,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
         }
       }
     };
-  
+
     traverseChildren(children);
-  
+
     return formattedText.trim();
-  };  
+  };
 
   const textFromChildren = getTextFromChildren(children).trim();
   const formattedTextToShare = `*${title.toUpperCase()} 🌳*\n${textFromChildren}`;
@@ -88,22 +103,24 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       >
         {/* Camada de degradê preto com 90% de transparência */}
         <div
-          style={{ 
-            width: '100%', 
-            height: '100%', 
-            background: 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))' }}
+          style={{
+            width: '100%',
+            height: '100%',
+            background: 'linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.9))'
+          }}
         ></div>
         {/* Título */}
-        <h1 style={{ 
-          position: 'absolute', 
-          top: '70px', 
-          transform: 'translateX(5%)', 
-          color: 'white', 
+        <h1 style={{
+          position: 'absolute',
+          top: '70px',
+          transform: 'translateX(5%)',
+          color: 'white',
           alignItems: 'left',
           padding: '20px',
           fontSize: '1.8rem',
           fontWeight: 'bold',
-          zIndex: 1 }}>{title}</h1>
+          zIndex: 1
+        }}>{title}</h1>
       </div>
 
       {/* Ícones de voltar e compartilhar */}
@@ -142,13 +159,13 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
             transform: 'translate(-50%, -50%)',
             zIndex: 2,
           }}
-          onClick={handleCheckClick}
+          onClick={() => handleCheckClick()}
         >
           <div
             style={{
               cursor: 'pointer',
               borderRadius: '50%',
-              backgroundColor: checked ? '#5cb85c' : '#B6B2B2',
+              backgroundColor: !!checked ? '#5cb85c' : '#B6B2B2',
               padding: '5px',
             }}
           >
@@ -158,7 +175,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ backgroundImageUrl, title, chil
       )}
 
       {/* Retângulo arredondado */}
-      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px 30px 60px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1, overflow:'auto'}}>
+      <div style={{ backgroundColor: '#EFEFEF', borderRadius: '40px', padding: '30px 30px 60px', position: 'absolute', top: '25vh', left: 0, right: 0, bottom: 0, zIndex: 1, overflow: 'auto' }}>
         {/* Conteúdo dentro do retângulo */}
         {children}
       </div>

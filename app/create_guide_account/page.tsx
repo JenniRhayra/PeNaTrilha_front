@@ -29,6 +29,7 @@ import { IForestType } from '../services/axios-config/connection/types/IForestTy
 import { ISpecialityProps } from '../services/axios-config/connection/types/ISpecialityProps';
 import { IParkProp } from '../services/axios-config/connection/types/IParkProp';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 interface CustomProps {
     onChange: (event: { target: { name: string; value: string } }) => void;
@@ -43,6 +44,7 @@ export default function Create_Account() {
     const [parkError, setParkError] = useState("");
     const [getGender, setGender] = useState("");
     const [image, setImage] = useState<any>(null);
+    const router = useRouter();
     console.log('getGender', getGender)
     const [getLanguages, , loadingLanguages, refetchLanguages] = useQuery(() => guideService.listLanguages(), []);
 
@@ -87,11 +89,18 @@ export default function Create_Account() {
             formData.append('description', guide_data?.description);
             formData.append('email', email);
 
-            await guideService.createGuideAccount(formData)
+            const data = await guideService.createGuideAccount(formData)
 
-            toast.success('Parque cadastrado com sucesso.')
+            Cookies.set('refreshToken', data.token, { expires: 7 });
+            Cookies.set('email', data.email);
+            Cookies.set('id', data.id);
+            Cookies.set('group', String(data.group));
+
+            toast.success('Guia cadastrado com sucesso.')
+
+            router.push('/success_register');
         } catch (err: any) {
-            toast.error(err?.response?.data?.message || 'Erro ao cadastrar o parque')
+            toast.error(err?.response?.data?.message || 'Erro ao cadastrar o guia')
         }
 
     };

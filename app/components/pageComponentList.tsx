@@ -84,7 +84,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
     }
     return text.slice(0, maxLength) + '...';
   };
-  
+
 
   const ArrowButton = styled.button<{ left?: boolean; visible?: boolean }>`
     position: absolute;
@@ -165,17 +165,17 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
           scrollBehavior: 'smooth',
           transform: `translateX(-${scrollX}px)`
         }}>
-          {type.map((profile, index) => (
+          {type?.map((profile, index) => (
             <ListItemStyled key={index}>
               {showCheckIcon && (
                 <CheckIcon>
                   <FaCheck size={20} color="white" />
                 </CheckIcon>
               )}
-              {profile.photo && (
+              {profile?.photo && (
                 <ListItemAvatar>
                   <ImageWrapper>
-                    <Image src={profile.photo} alt={profile.name} layout="fill" objectFit="cover" />
+                    <Image src={profile?.photo} alt={profile?.name} layout="fill" objectFit="cover" />
                     {showCheckIcon && (
                       <ImageOverlay>
                         <HiOutlineBadgeCheck size={20} color="white" />
@@ -188,22 +188,22 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                 </ListItemAvatar>
               )}
               <ListItemText
-                primary={profile.name}
+                primary={profile?.name}
                 secondary={
                   <>
-                    {profile.description && (
+                    {profile?.description && (
                       <Typography component="span" fontSize={'12px'} color="textPrimary">
-                        {truncateText(profile.description, 45)}
+                        {truncateText(profile?.description, 45)}
                       </Typography>
                     )}
                     <br />
-                    {profile.language && (
+                    {profile?.language && (
                       <Typography component="span" fontSize={'12px'}>
                         Idioma: {profile.language}
                         <br />
                       </Typography>
                     )}
-                    {profile.park && (
+                    {profile?.park && (
                       <Typography component="span" fontSize={'12px'}>
                         Parque: {profile.park}
                         <br />
@@ -211,7 +211,7 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
                     )}
                     <div style={{ textAlign: 'right' }}>
                       {showViewMoreLink && (
-                        <Link href={profile.link} passHref>
+                        <Link href={profile?.link} passHref>
                           <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver mais</Typography>
                         </Link>
                       )}

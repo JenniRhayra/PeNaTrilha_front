@@ -1,9 +1,11 @@
 import { api } from "..";
-import { IAuthProps } from "./types/IAuthProps";
+import { IAuthProps, ILoginReturn } from "./types/IAuthProps";
 
 export class AuthService {
-    async authenticateWithPassword(data: IAuthProps): Promise<void> {
-        await api.post('/sessions/password', data);
+    async authenticateWithPassword(data: IAuthProps): Promise<ILoginReturn> {
+        const results = await api.post('/sessions/password', data);
+
+        return results.data;
     }
 }
 

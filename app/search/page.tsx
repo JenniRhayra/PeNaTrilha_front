@@ -1,10 +1,10 @@
 "use client"
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import SearchComponent from '../components/searchComponent';
-import { Autocomplete, AutocompleteItem} from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, image, link } from "@nextui-org/react";
 import { useState } from 'react';
 import Card from '../components/cardComponent';
 import Stack from '@mui/material/Stack';
@@ -19,6 +19,9 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
 import { FaFilter } from "react-icons/fa6";
 import { FaSortAlphaDown } from 'react-icons/fa';
+import { Park } from '../services/axios-config/connection/types/IListManyParksInfo';
+import { parkService } from '../services/axios-config/connection/park';
+import { useQuery } from '../hooks/useQuery';
 
 //Essa info vai vir da consulta do backend
 const parksList = [
@@ -27,7 +30,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -35,7 +38,7 @@ const parksList = [
     image: '/images/parque-carlos-botelho.jpg', // Substitua pelo caminho real da imagem
     description: 'Conhecido por suas paisagens de cerrado, cachoeiras e trilhas deslumbrantes.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -43,7 +46,7 @@ const parksList = [
     image: '/images/parque-carlos-botelho.jpg', // Substitua pelo caminho real da imagem
     description: 'Popular por suas dunas, lagoas cristalinas e praias paradisíacas.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -51,7 +54,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -59,7 +62,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -67,7 +70,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -75,7 +78,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   },
   {
@@ -83,7 +86,7 @@ const parksList = [
     image: '/images/parque-iguacu.jpg', // Substitua pelo caminho real da imagem
     description: 'Famoso pelas Cataratas do Iguaçu, uma das novas sete maravilhas da natureza.',
     link: 'https://github.com/JenniRhayra/PeNaTrilha_back/branches',
-    lat:  -24.056113238506416,
+    lat: -24.056113238506416,
     long: -47.99360184042935
   }
 ];
@@ -113,21 +116,21 @@ const Search: React.FC = () => {
   const guideIdiomas = [
     'Português',
     'Inglês',
-    'Francês',  
+    'Francês',
   ];
 
   const guideEspec = [
     'Botânica',
     'Montanhismo',
-    'Observação de aves',  
+    'Observação de aves',
   ];
 
   const infraPark = [
     'Banheiro',
     'Hospedagem',
-    'Restaurante', 
+    'Restaurante',
     'Acessibilidade',
-    'Estacionamento' 
+    'Estacionamento'
   ];
 
   const [infraSelected, setInfraSelected] = useState<string[]>([]);
@@ -135,14 +138,28 @@ const Search: React.FC = () => {
   const handleInfraChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     setInfraSelected(event.target.value as string[]);
   };
- 
+
   const [isDivFilterVisible, setDivFilterVisible] = useState(false);
   const [sliderValue, setSliderValue] = React.useState<number>(5);
   const [filterValue, setSelectedFilter] = React.useState<React.Key>("p");
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [selectedSortIndex, setSelectedIndex] = React.useState(2);
-  const [parks, setParks] = useState<any[]>(parksList);
-  
+  // const [parks, setParks] = useState<any>();
+
+  const [getParks, , loadingParks, refetchParks] = useQuery(() => parkService.listManyParkInfo(), []);
+
+  const parks = (getParks?.park || []).map((park: Park) => ({
+    id: park?.id,
+    image: park?.parkImage,
+    title: park?.park_name,
+    description: park?.description,
+    links: park?.site,
+    navigate: `/content_pages/${park?.id}`,
+    lat: '',
+    long: ''
+  }));
+
+
   const open = Boolean(anchorEl);
 
   const handleFilterClick = () => {
@@ -154,7 +171,7 @@ const Search: React.FC = () => {
   };
 
   const handleOrderOfResults = (index: number) => {
-    switch(index){
+    switch (index) {
       //A-Z
       case 0:
         setParks(sortAlphabetically());
@@ -168,17 +185,17 @@ const Search: React.FC = () => {
       //Mais próximos
       case 2:
         break;
-        default: '';
+      default: '';
     }
   }
 
   const sortAlphabetically = () => {
-    
+
     return parksList.slice().sort((a, b) => a.title.localeCompare(b.title));
   }
 
   const sortAlphabeticallyDesc = () => {
-    
+
     return parksList.slice().sort((a, b) => b.title.localeCompare(a.title));
   }
 
@@ -189,7 +206,7 @@ const Search: React.FC = () => {
     console.log(index);
     setSelectedIndex(index);
     handleOrderOfResults(index);
-    setAnchorEl(null);  
+    setAnchorEl(null);
   };
 
   const handleCloseSort = () => {
@@ -202,8 +219,8 @@ const Search: React.FC = () => {
 
   const handleSearchTitle = (): string => {
     let title: string = '';
-    
-    switch(filterValue){
+
+    switch (filterValue) {
       case "p":
         title = "Parques";
         break;
@@ -216,7 +233,7 @@ const Search: React.FC = () => {
     }
 
     return title;
-   
+
   }
 
   const handleSortItems = (): string[] => {
@@ -225,22 +242,22 @@ const Search: React.FC = () => {
 
     sortListFiltered = sortOptions;
 
-    if(filterValue == 'p'){
+    if (filterValue == 'p') {
       sortOptions.push('Mais próximos');
       sortListFiltered = sortOptions;
     }
 
-    if(qtOptions == 3 && filterValue != 'p'){
+    if (qtOptions == 3 && filterValue != 'p') {
       sortOptions.pop();
       sortListFiltered = sortOptions;
     }
-   
+
     return sortListFiltered;
   }
 
   const [language, setLanguage] = React.useState<string[]>([]);
   const [espec, setEspec] = React.useState<string[]>([]);
-  
+
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
   const MenuProps = {
@@ -269,26 +286,26 @@ const Search: React.FC = () => {
       </div>
 
       <div id='main'>
-        <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems:'center'}}>
+        <div id='conteinerBusca' style={{ marginTop: '3rem', marginLeft: '8rem', alignItems: 'center' }}>
           <SearchComponent title={`BUSCAR - ${handleSearchTitle()}`} filterTerm={filterValue ? filterValue.toString() : undefined}></SearchComponent>
         </div>
       </div>
 
       <div className="flex w-full flex-wrap md:flex-wrap mb-6 md:mb-0 px-4">
         {filterValue?.toString() === 'p' ? (
-          <div id='paiGoogle' style={{ width: '100%', marginTop:'20vh' }}>
-            <GoogleMaps showMap={true}/>
+          <div id='paiGoogle' style={{ width: '100%', marginTop: '20vh' }}>
+            <GoogleMaps showMap={true} />
           </div>
         ) : (
           <div id='paiGoogle' style={{ width: '100%' }}>
-            <GoogleMaps showMap={false}/>
+            <GoogleMaps showMap={false} />
           </div>
         )}
       </div>
 
       <div>
-        <div className='filters' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'flex-end', alignItems: 'center', padding:'0 3vh 2vh 0'}}>
-          <div style={{ marginRight: '3vh', alignItems:'center', display: 'flex' }}>
+        <div className='filters' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'flex-end', alignItems: 'center', padding: '0 3vh 2vh 0' }}>
+          <div style={{ marginRight: '3vh', alignItems: 'center', display: 'flex' }}>
             <FaFilter
               style={{ fontSize: 20, cursor: 'pointer' }}
               onClick={handleFilterClick}
@@ -297,7 +314,7 @@ const Search: React.FC = () => {
           </div>
 
           <div style={{ alignItems: 'center', display: 'flex' }}>
-            <FaSortAlphaDown 
+            <FaSortAlphaDown
               style={{ fontSize: 20, cursor: 'pointer' }}
               onClick={handleSortClick}
             />
@@ -315,7 +332,7 @@ const Search: React.FC = () => {
               {handleSortItems().map((option, index) => (
                 <MenuItem
                   key={option}
-                  onClick={(event) => handleSortItemClick(event, index)}             
+                  onClick={(event) => handleSortItemClick(event, index)}
                   selected={index === selectedSortIndex}
                 >
                   {option}
@@ -326,10 +343,10 @@ const Search: React.FC = () => {
         </div>
 
         {isDivFilterVisible && (
-          <div style={{gridTemplateColumns: '1fr 1fr', marginTop: '0vh 3vh', justifyContent: 'flex-start', backgroundColor:'white', alignItems: 'center', padding:'3vh 2vh', borderBottom: '1px solid #667358', borderRadius: '4px'}}>
-            <div style={{display: 'flex', flexDirection: 'column', marginBottom: '1vh'}}>
-              <div style={{marginBottom: '3vh'}}>
-                <Autocomplete 
+          <div style={{ gridTemplateColumns: '1fr 1fr', marginTop: '0vh 3vh', justifyContent: 'flex-start', backgroundColor: 'white', alignItems: 'center', padding: '3vh 2vh', borderBottom: '1px solid #667358', borderRadius: '4px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', marginBottom: '1vh' }}>
+              <div style={{ marginBottom: '3vh' }}>
+                <Autocomplete
                   isRequired
                   label="Selecione um filtro:"
                   labelPlacement={"outside-left"}
@@ -345,16 +362,16 @@ const Search: React.FC = () => {
               </div>
 
               {filterValue?.toString() === 'p' && (
-                <div style={{  display: 'flex', justifyContent:'space-around', fontSize:'13px', color:'black'}}>
-                  <div id='filtrosParque' style={{ alignItems: 'center',width: '20vh'}}> 
+                <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '13px', color: 'black' }}>
+                  <div id='filtrosParque' style={{ alignItems: 'center', width: '20vh' }}>
                     <label>Distância:</label>
                     <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
                       <Slider aria-label="Volume" value={sliderValue} onChange={handleSliderChange} />
                     </Stack>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
-                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize:'13px', color:'black'}}>Infraestrutura</InputLabel>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '25vh' }}>
+                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize: '13px', color: 'black' }}>Infraestrutura</InputLabel>
                     <Select
                       labelId="demo-multiple-checkbox-label"
                       id="demo-multiple-checkbox"
@@ -383,10 +400,10 @@ const Search: React.FC = () => {
                 </div>
               )}
 
-              {filterValue?.toString() == 'g' &&(
-                <div style={{  display: 'flex', justifyContent:'space-around', fontSize:'13px', color:'black'}}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
-                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize:'13px', color:'black'}}>Idiomas</InputLabel>
+              {filterValue?.toString() == 'g' && (
+                <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '13px', color: 'black' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '25vh' }}>
+                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize: '13px', color: 'black' }}>Idiomas</InputLabel>
                     <Select
                       labelId="demo-multiple-checkbox-label"
                       id="demo-multiple-checkbox_idioma"
@@ -413,8 +430,8 @@ const Search: React.FC = () => {
                     </Select>
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center',width: '25vh'}}>
-                    <InputLabel id="demo-multiple-checkbox-label_espec" sx={{ fontSize:'13px', color:'black'}}>Especialidade</InputLabel>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '25vh' }}>
+                    <InputLabel id="demo-multiple-checkbox-label_espec" sx={{ fontSize: '13px', color: 'black' }}>Especialidade</InputLabel>
                     <Select
                       labelId="demo-multiple-checkbox-label_espec"
                       id="demo-multiple-checkbox_espec"
@@ -441,29 +458,29 @@ const Search: React.FC = () => {
                     </Select>
                   </div>
                 </div>
-              )}  
-            </div> 
+              )}
+            </div>
           </div>
         )}
 
-        <div id='cardsConteiner' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'center', flexWrap:'wrap',alignItems: 'center', padding:'0 3vh 2vh 3vh'}}>
-          {parks?.map((park, index) => (
+        <div id='cardsConteiner' style={{ display: 'flex', marginTop: '2vh', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center', padding: '0 3vh 2vh 3vh' }}>
+          {parks?.map((park: any, index: number) => (
             <div key={index}>
               <Card
                 title={park.title}
                 image={park.image}
                 description={park.description}
-                link={park.link}
+                link={park.navigate}
                 distancia={'3.6KM'}
-                chipIsVisible = {filterValue?.toString() == 'p' ? true : false}
-                pinIsVisible = {filterValue?.toString() == 'p' ? true : false} 
+                chipIsVisible={filterValue?.toString() == 'p' ? true : false}
+                pinIsVisible={filterValue?.toString() == 'p' ? true : false}
               />
             </div>
           ))}
         </div>
 
       </div>
-      <div style={{paddingBottom:'5vh'}}></div>
+      <div style={{ paddingBottom: '5vh' }}></div>
       <FooterMenu activePage='search'></FooterMenu>
 
     </>
