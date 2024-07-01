@@ -6,6 +6,7 @@ import Link from 'next/link';
 import styled from 'styled-components';
 import { HiOutlineBadgeCheck } from 'react-icons/hi';
 import { FaCheck } from 'react-icons/fa';
+import { profile } from 'console';
 
 interface Profile {
   photo?: string;
@@ -14,6 +15,9 @@ interface Profile {
   language?: string;
   park?: string;
   link: string;
+  delete?: any;
+  reloadList?: any;
+  edit?: any;
 }
 
 interface ProfileListProps {
@@ -55,11 +59,13 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
   };
 
   const handleView = (profile: Profile) => {
-    console.log("Visualizando perfil:", profile.name);
+    location.pathname = profile?.link;
   };
 
   const handleEdit = (profile: Profile) => {
-    console.log("Editando perfil:", profile.name);
+    if (profile.edit) {
+      profile.edit();
+    }
   };
 
   const handleDelete = (profile: Profile) => {
@@ -71,10 +77,15 @@ const ProfileList: React.FC<ProfileListProps> = ({ type, layout, showCheckIcon, 
     setOpenDeleteDialog(false);
   };
 
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (selectedProfile) {
-      console.log("Excluindo perfil:", selectedProfile.name);
-      setOpenDeleteDialog(false);
+      try {
+        await selectedProfile.delete()
+        selectedProfile.reloadList()
+        setOpenDeleteDialog(false);
+      } catch (err: any) {
+        console.log(err?.response?.data?.message)
+      }
     }
   };
 

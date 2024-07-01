@@ -89,7 +89,7 @@ export default function Create_Account() {
             formData.append('description', guide_data?.description);
             formData.append('email', email);
 
-            const data = await guideService.createGuideAccount(formData)
+            const { data } = await guideService.createGuideAccount(formData)
 
             Cookies.set('refreshToken', data.token, { expires: 7 });
             Cookies.set('email', data.email);
@@ -98,7 +98,7 @@ export default function Create_Account() {
 
             toast.success('Guia cadastrado com sucesso.')
 
-            router.push('/success_register');
+            router.push('/approval_register');
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Erro ao cadastrar o guia')
         }

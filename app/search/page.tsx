@@ -363,12 +363,12 @@ const Search: React.FC = () => {
 
               {filterValue?.toString() === 'p' && (
                 <div style={{ display: 'flex', justifyContent: 'space-around', fontSize: '13px', color: 'black' }}>
-                  <div id='filtrosParque' style={{ alignItems: 'center', width: '20vh' }}>
+                  {/* <div id='filtrosParque' style={{ alignItems: 'center', width: '20vh' }}>
                     <label>Distância:</label>
                     <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
                       <Slider aria-label="Volume" value={sliderValue} onChange={handleSliderChange} />
                     </Stack>
-                  </div>
+                  </div> */}
 
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '25vh' }}>
                     <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize: '13px', color: 'black' }}>Infraestrutura</InputLabel>

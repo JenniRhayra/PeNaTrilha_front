@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiCheck, FiX } from 'react-icons/fi';
 import { List, ListItem, ListItemText, ListItemAvatar, Typography, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import Image from 'next/image';
 import styled from 'styled-components';
 import Link from 'next/link';
-
+import { managerService } from '../services/axios-config/connection';
+import Cookies from 'js-cookie';
 interface Profile {
+  id: number;
   photo: string;
   name: string;
-  status: 'pendente' | 'aprovado' | 'desativado' | 'reprovado';
+  status: 'PENDENTE' | 'APROVADO' | 'desativado' | 'REPROVADO';
   habilidades: string[];
   language: string;
   park: string[];
@@ -17,36 +19,52 @@ interface Profile {
 
 interface ProfileApproveProps {
   profile: Profile[];
+  refetch?: any;
 }
 
-const ProfileApprove: React.FC<ProfileApproveProps> = ({ profile }) => {
+const ProfileApprove: React.FC<ProfileApproveProps> = ({ profile, refetch }) => {
+  const id = Cookies.get('id');
+
   const [guias, setGuias] = useState<Profile[]>(profile);
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedGuia, setSelectedGuia] = useState<Profile | null>(null);
   const [novoStatus, setNovoStatus] = useState<Profile['status'] | null>(null);
 
-  const atualizarStatus = () => {
+  useEffect(() => {
+    setGuias(profile)
+  }, [profile]);
+
+  const atualizarStatus = async () => {
     if (selectedGuia && novoStatus) {
-      const novosGuias = guias.map((guia) => {
+      guias.map(async (guia) => {
         if (guia.name === selectedGuia.name) {
-          return { ...guia, status: novoStatus };
+          try {
+            await managerService.approveGuide(guia.id, novoStatus, Number(id))
+            setOpenDialog(false);
+            refetch()
+          } catch (err: any) {
+            console.log('err', err)
+          }
+
+          // return { ...guia, status: novoStatus };
         }
-        return guia;
+        // return guia;
       });
-      setGuias(novosGuias);
-      setOpenDialog(false);
+      // console.log('novosGuias', novosGuias)
+      // setGuias(novosGuias);
+
     }
   };
 
   const getStatusColor = (status: Profile['status']) => {
     switch (status) {
-      case 'pendente':
+      case 'PENDENTE':
         return '#DFBA2B';
-      case 'aprovado':
+      case 'APROVADO':
         return '#7D9662';
       case 'desativado':
         return 'gray';
-      case 'reprovado':
+      case 'REPROVADO':
         return '#EF2945';
       default:
         return 'gray';
@@ -80,7 +98,7 @@ const ProfileApprove: React.FC<ProfileApproveProps> = ({ profile }) => {
     right: 10px;
   `;
 
-  const StatusText = styled(Typography)<{ status: Profile['status'] }>`
+  const StatusText = styled(Typography) <{ status: Profile['status'] }>`
     font-size: 0.8rem;
     color: ${({ status }) => getStatusColor(status)};
   `;
@@ -125,38 +143,38 @@ const ProfileApprove: React.FC<ProfileApproveProps> = ({ profile }) => {
                 secondary={
                   <>
                     <Typography component="span" variant="body2" color="textPrimary">
-                      Habilidades: {guia.habilidades.join(', ')}
+                      Habilidades: {guia.habilidades}
                     </Typography>
                     <br />
                     Idioma: {guia.language}
                     <br />
-                    Parques: {guia.park.join(', ')}
+                    Parques: {guia.park}
                     <div style={{ textAlign: 'right' }}>
-                        <Link href={guia.link} passHref>
-                            <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver perfil</Typography>
-                        </Link>
-                        <div style={{ textAlign: 'center' }}>
-                            {guia.status === 'pendente' && (
-                            <>
-                                <ActionButton onClick={() => handleOpenDialog(guia, 'aprovado')} style={{ color: 'green' }}>
-                                    Aprovar
-                                </ActionButton>
-                                <ActionButton onClick={() => handleOpenDialog(guia, 'reprovado')} style={{ color: 'red' }}>
-                                    Recusar
-                                </ActionButton>
-                            </>
-                            )}
-                            {guia.status === 'reprovado' && (
-                                <ActionButton onClick={() => handleOpenDialog(guia, 'aprovado')} style={{ color: 'green' }}>
-                                    Aprovar
-                                </ActionButton>
-                            )}
-                            {guia.status === 'aprovado' && (
-                                <ActionButton onClick={() => handleOpenDialog(guia, 'reprovado')} style={{ color: 'red' }}>
-                                    Recusar
-                                </ActionButton>
-                            )}
-                        </div>
+                      <Link href={guia.link} passHref>
+                        <Typography component="a" variant="caption" style={{ textDecoration: 'underline', color: '#99B83C' }}>Ver perfil</Typography>
+                      </Link>
+                      <div style={{ textAlign: 'center' }}>
+                        {guia.status === 'PENDENTE' && (
+                          <>
+                            <ActionButton onClick={() => handleOpenDialog(guia, 'APROVADO')} style={{ color: 'green' }}>
+                              Aprovar
+                            </ActionButton>
+                            <ActionButton onClick={() => handleOpenDialog(guia, 'REPROVADO')} style={{ color: 'red' }}>
+                              Recusar
+                            </ActionButton>
+                          </>
+                        )}
+                        {guia.status === 'REPROVADO' && (
+                          <ActionButton onClick={() => handleOpenDialog(guia, 'APROVADO')} style={{ color: 'green' }}>
+                            Aprovar
+                          </ActionButton>
+                        )}
+                        {guia.status === 'APROVADO' && (
+                          <ActionButton onClick={() => handleOpenDialog(guia, 'REPROVADO')} style={{ color: 'red' }}>
+                            Recusar
+                          </ActionButton>
+                        )}
+                      </div>
                     </div>
                   </>
                 }
@@ -170,7 +188,7 @@ const ProfileApprove: React.FC<ProfileApproveProps> = ({ profile }) => {
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Confirmação</DialogTitle>
         <DialogContent>
-          Tem certeza que deseja {novoStatus === 'aprovado' ? 'aprovar' : 'recusar'} o perfil de {selectedGuia?.name}?
+          Tem certeza que deseja {novoStatus === 'APROVADO' ? 'aprovar' : 'recusar'} o perfil de {selectedGuia?.name}?
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} color="primary">

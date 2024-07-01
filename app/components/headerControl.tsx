@@ -6,13 +6,14 @@ import { IoMdRemoveCircle } from "react-icons/io"; // Importa o ícone de remoç
 interface HeaderControlProps {
   showAdd?: boolean;
   showDelete?: boolean;
+  option?: string;
 }
 
-const HeaderControl: React.FC<HeaderControlProps> = ({ showAdd = false, showDelete = false }) => {
+const HeaderControl: React.FC<HeaderControlProps> = ({ showAdd = false, showDelete = false, option = 'dicas' }) => {
   const router = useRouter();
 
   const handleAddClick = () => {
-    router.push('/create_content');
+    router.push(`/create_content/${option}`);
   };
 
   const handleDeleteClick = () => {
@@ -21,22 +22,26 @@ const HeaderControl: React.FC<HeaderControlProps> = ({ showAdd = false, showDele
   };
 
   return (
-    <div style={{ 
-            display: 'flex', 
-            alignItems: 'center',
-            padding: '190px 40px 0px'}}>
-      <input type="checkbox" id="select"/>
-      <label htmlFor="select" style={{ marginRight: '10px', marginLeft: '10px' }}>Selecionar todos</label>
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '190px 40px 0px',
+      marginTop: '30px'
+
+    }}>
+      {/* <input type="checkbox" id="select" />
+      <label htmlFor="select" style={{ marginRight: '10px', marginLeft: '10px' }}>Selecionar todos</label> */}
 
       {showAdd && (
         <>
-          <IoMdAddCircle 
-            size={20} 
-            color="#7D9662" 
-            style={{ marginRight: '5px', marginLeft: '10px', cursor: 'pointer' }} 
+          <IoMdAddCircle
+            size={20}
+            color="#7D9662"
+            style={{ marginRight: '5px', marginLeft: '10px', cursor: 'pointer' }}
             onClick={handleAddClick}
           />
-          <span 
+          <span
             style={{ cursor: 'pointer' }}
             onClick={handleAddClick}
           >
@@ -49,11 +54,11 @@ const HeaderControl: React.FC<HeaderControlProps> = ({ showAdd = false, showDele
         <>
           <IoMdRemoveCircle
             size={20}
-            color="#FF0000" 
-            style={{ marginRight: '5px', marginLeft: '10px', cursor: 'pointer' }} 
+            color="#FF0000"
+            style={{ marginRight: '5px', marginLeft: '10px', cursor: 'pointer' }}
             onClick={handleDeleteClick}
           />
-          <span 
+          <span
             style={{ cursor: 'pointer' }}
             onClick={handleDeleteClick}
           >

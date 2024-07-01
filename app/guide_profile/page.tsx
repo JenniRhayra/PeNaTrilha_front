@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import FooterMenu from '../components/footerMenu';
 import Header from '../components/header';
 import { Avatar } from '@nextui-org/react';
 import { Chip, FormControlLabel, Radio, RadioGroup } from '@mui/material';
@@ -10,14 +9,15 @@ import Button from '@mui/material/Button';
 import './profile.css';
 import PageComponentList from '../components/pageComponentList';
 import Image from 'next/image';
-import Link from 'next/link';
 import Cookies from 'js-cookie';
 import { useQuery } from '../hooks/useQuery';
 import { toast } from 'react-toastify';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useForm } from 'react-hook-form';
 import { parkService } from '../services/axios-config/connection/park';
-import { guideService } from '../services/axios-config/connection';
+import { guideService, usersService } from '../services/axios-config/connection';
+import { ConfirmDialog } from '../components/excludeDialog';
+import FooterMenu from '../components/footerMenu';
 
 interface GuideProfile {
   // Implementar interface do profile tipo guia e aplicar na página
@@ -49,6 +49,36 @@ const GuideProfile: React.FC = () => {
   useEffect(() => {
     setEditedProfile(getGuideProfile);
   }, [getGuideProfile]);
+
+
+  const [open, setOpen] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const logoutPath = "/login";
+
+  const handleRedirect = async (newPath: string) => {
+    location.pathname = newPath;
+  }
+
+  const handleClose = async (confirm: boolean) => {
+    setOpen(false);
+    if (confirm) {
+      try {
+        await usersService.inativeUser(Number(userId))
+
+        Cookies.remove('id')
+        Cookies.remove('email')
+        Cookies.remove('group')
+        Cookies.remove('refreshToken')
+        handleRedirect(logoutPath);
+      } catch (err: any) {
+        console.log(err?.response?.data?.message || 'Erro ao cadastrar o guia')
+      }
+    }
+  };
 
   const languageOptions = (getLanguages || []).map((object: any) => ({
     value: object.id,
@@ -383,6 +413,7 @@ const GuideProfile: React.FC = () => {
         </div>
       </form >
       <FooterMenu activePage='profile' />
+      <ConfirmDialog open={open} onClose={handleClose} />
       <br />
       <br />
       <br />

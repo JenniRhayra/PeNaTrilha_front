@@ -12,7 +12,7 @@ import SearchComponent from '../components/searchComponent';
 import Cookies from 'js-cookie';
 import { parkService } from '../services/axios-config/connection/park';
 import { useQuery } from '../hooks/useQuery';
-import EditActivityDialog from './EditActivityDialog';
+import EditGoodPracticeDialog from './EditGoodPracticeDialog';
 
 const RegisterContent: React.FC = () => {
   const userId = Cookies.get('id');
@@ -20,15 +20,15 @@ const RegisterContent: React.FC = () => {
   const [currentActivity, setCurrentActivity] = useState<any>(null);
 
 
-  const [getActivities, , loadingActivities, refetchActivities] = useQuery(() => parkService.listManyActivityById(Number(userId)), [userId]);
+  const [getGoodPractice, , loadingGoodPractice, refetchGoodPractice] = useQuery(() => parkService.listManyGoodPracticeById(Number(userId)), [userId]);
 
-  const activities = (getActivities || []).map((object: any, index: number) => ({
-    photo: object?.activityImage,
-    name: object?.activityName,
-    description: object?.description,
-    link: `/content_pages/${object?.park?.id}/activity/${object?.id}`,
+  const goodPractice = (getGoodPractice || []).map((object: any, index: number) => ({
+    photo: object?.practiceImage,
+    name: object?.title,
+    description: '',
+    link: `#`,
     delete: () => parkService.deleteActivity(object.id),
-    reloadList: () => refetchActivities(),
+    reloadList: () => refetchGoodPractice(),
     edit: () => {
       setCurrentActivity(object);
       setOpenEditDialog(true);
@@ -42,8 +42,6 @@ const RegisterContent: React.FC = () => {
     width: 100%;
   `;
 
-  console.log('currentActivity', currentActivity)
-
   const handleEditDialogClose = () => {
     setOpenEditDialog(false);
     setCurrentActivity(null);
@@ -53,7 +51,7 @@ const RegisterContent: React.FC = () => {
     console.log('data', data)
     try {
       await parkService.updateActivity(data);
-      refetchActivities();
+      refetchGoodPractice();
       handleEditDialogClose();
     } catch (err: any) {
       console.error(err?.response?.data?.message);
@@ -64,24 +62,19 @@ const RegisterContent: React.FC = () => {
     <Container>
       <Header />
       <ButtonBack top={'6vh'} />
-      <SearchComponent title='ATIVIDADES' />
-      <HeaderControl showAdd={true} option='atividade' />
-      <PageComponentList type={activities} layout='column' showCRUDIcons={true} showViewMoreLink={false} />
+      <SearchComponent title='Dicas' />
+      <HeaderControl showAdd={true} option='dicas' />
+      <PageComponentList type={goodPractice} layout='column' showCRUDIcons={true} showViewMoreLink={false} />
       <FooterMenu activePage="profile" />
       {currentActivity && (
-        <EditActivityDialog
+        <EditGoodPracticeDialog
           open={openEditDialog}
           onClose={handleEditDialogClose}
           onSubmit={handleEditDialogSubmit}
           initialData={{
-            percurso: currentActivity.percurso,
-            duracao: currentActivity.duracao,
-            description: currentActivity.description,
-            isMonitored: currentActivity.isMonitored,
-            activityName: currentActivity.activityName,
-            activityImage: currentActivity.activityImage,
+            title: currentActivity.title,
+            practiceImage: currentActivity.practiceImage,
             id: currentActivity.id,
-            difficultyLevel: currentActivity.difficultyLevel,
           }}
         />
       )}

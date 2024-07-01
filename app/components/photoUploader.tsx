@@ -4,9 +4,10 @@ import Image from 'next/image';
 interface IPhotoUploaderProps {
   setImage: any;
   image_view: string;
+  initial_photo?: string
 }
 
-export const PhotoUploader = ({ setImage, image_view }: IPhotoUploaderProps) => {
+export const PhotoUploader = ({ setImage, image_view, initial_photo }: IPhotoUploaderProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +46,7 @@ export const PhotoUploader = ({ setImage, image_view }: IPhotoUploaderProps) => 
             />
           ) : (
             <Image
-              src={`/images/${image_view}.png`}
+              src={initial_photo ?? `https://i.ibb.co/3W2rMgf/f97c1409e257.png`}
               alt="Default Image"
               layout="fill"
               objectFit="cover"

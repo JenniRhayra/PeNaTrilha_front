@@ -17,7 +17,7 @@ const FooterMenu: React.FC<FooterMenuProps> = ({ activePage }) => {
   const group = Cookies.get('group');
 
   React.useEffect(() => {
-    const path = (group == '3' || group == 'GERENTE') ? 'parkManager_profile' : (group == '4' || group == 'GUIA') ? 'guide_profile' : 'guide_profile'
+    const path = (group == '3' || group == 'GERENTE') ? 'parkManager_profile' : (group == '4' || group == 'GUIA') ? 'guide_profile' : (group == '2' || group == 'VISITANTE') ? 'visitor_profile' : 'visitor_profile'
     setPath(path)
   }, [group])
 

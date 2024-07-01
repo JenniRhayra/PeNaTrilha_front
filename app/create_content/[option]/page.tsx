@@ -1,27 +1,33 @@
 "use client";
 
 import React, { useState } from 'react';
-import FooterMenu from '../components/footerMenu';
-import Header from '../components/header';
-import '../globals.css';
+import FooterMenu from '../../components/footerMenu';
+import Header from '../../components/header';
+import '../../globals.css';
 import styled from 'styled-components';
-import { PhotoUploader } from '../components/photoUploader';
+import { PhotoUploader } from '../../components/photoUploader';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
-import ButtonGreen from '../components/buttonGreen';
+import ButtonGreen from '../../components/buttonGreen';
 import { useForm } from 'react-hook-form';
 import Switch from '@mui/material/Switch';
 import { IMaskInput } from 'react-imask';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
-
+import { useParams } from 'next/navigation';
+import Cookies from 'js-cookie';
+import { parkService } from '@/app/services/axios-config/connection/park';
 
 const CreateParkContent: React.FC = () => {
+    const params = useParams();
+    const option = params.option;
     const { register, handleSubmit } = useForm();
     const label = { inputProps: { 'aria-label': 'Monitoramento' } };
-    const [titleError, settitleError] = useState("");
-    const [selectedOption, setSelectedOption] = useState('dicas');
+    const [titleError, setTitleError] = useState("");
+    const [selectedOption, setSelectedOption] = useState(option);
+
+    const [image, setImage] = useState<any>(null);
 
     interface CustomProps {
         onChange: (event: { target: { name: string; value: string } }) => void;
@@ -66,18 +72,35 @@ const CreateParkContent: React.FC = () => {
         location.pathname = newPath;
     }
 
-    const handleFormSubmit = (formData: any) => {
-        console.log('form data is ', formData);
-        if (!formData.input_title || !formData.input_title.length) {
-            settitleError("Informe um título")
-            return false;
-        } else {
-            settitleError("");
+    const handleFormSubmit = async (data: any) => {
+        try {
+            if (!data.input_title || !data.input_title.length) {
+                setTitleError("Informe um título");
+                return false;
+            } else {
+                setTitleError("");
+            }
+
+            const id = Cookies.get('id');
+
+            const formData = new FormData();
+            formData.append('file', image);
+
+            formData.append('percurso', data?.percurso);
+            formData.append('duracao', data?.duracao);
+            formData.append('description', data?.box_description);
+            formData.append('isMonitored', data?.isMonitored);
+            formData.append('difficultyLevel', data?.difficultyLevel);
+            formData.append('activityName', data?.input_title);
+            formData.append('activityImage', data?.select_park);
+            formData.append('managerId', id);
+
+            await parkService.createActivity(formData)
+
+            handleRedirect('/register_park_content')
+        } catch (err: any) {
+            console.log(err || 'Erro ao cadastrar atividade')
         }
-
-        handleRedirect('/');
-
-        return true;
     }
 
     const renderContent = () => {
@@ -89,7 +112,7 @@ const CreateParkContent: React.FC = () => {
                             ATIVIDADE</h1>
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'left', marginTop: '2vh' }}>
-                            <PhotoUploader setImage={undefined} image_view={''} />
+                            <PhotoUploader setImage={setImage} image_view={''} />
                             <h1 className='ml-2'>Selecionar foto</h1>
                         </div>
 
@@ -127,17 +150,17 @@ const CreateParkContent: React.FC = () => {
                                 <div>
                                     <div style={{ display: 'inline-flex', position: 'relative', textAlign: 'left', justifyContent: 'left', margin: '10px', width: '35ch', gap: '2ch' }}>
                                         Necessita monitoramento
-                                        <Switch {...label} color='success' />
+                                        <Switch {...label} color='success' {...register('isMonitored')} />
                                     </div>
                                 </div>
 
                                 <div>
                                     <div style={{ display: 'inline-flex', position: 'relative', textAlign: 'left', justifyContent: 'left', margin: '10px', width: '35ch', gap: '2ch', flexDirection: 'row' }}>
                                         Nível de dificuldade
-                                        <Select>
-                                            <option>Média</option>
-                                            <option>Fácil</option>
-                                            <option>Difícil</option>
+                                        <Select {...register('difficultyLevel')}>
+                                            <option value='FACIL'>Fácil</option>
+                                            <option value='MEDIO'>Média</option>
+                                            <option value='DIFICIL'>Difícil</option>
                                         </Select>
                                     </div>
                                 </div>
@@ -152,7 +175,7 @@ const CreateParkContent: React.FC = () => {
                                         autoFocus
                                         error={titleError && titleError.length ? true : false}
                                         helperText={titleError}
-                                        {...register('input_percurso')}
+                                        {...register('percurso')}
                                     />
                                 </div>
 
@@ -166,7 +189,7 @@ const CreateParkContent: React.FC = () => {
                                         autoFocus
                                         error={titleError && titleError.length ? true : false}
                                         helperText={titleError}
-                                        {...register('input_duracao')}
+                                        {...register('duracao')}
                                     />
                                 </div>
 
@@ -186,7 +209,7 @@ const CreateParkContent: React.FC = () => {
                             EVENTO</h1>
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'left', marginTop: '2vh' }}>
-                            <PhotoUploader setImage={undefined} image_view={''} />
+                            <PhotoUploader setImage={setImage} image_view={''} />
                             <h1 className='ml-2'>Selecionar foto</h1>
                         </div>
 
@@ -224,12 +247,23 @@ const CreateParkContent: React.FC = () => {
 
                                 <div>
                                     <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
-                                        <InputLabel htmlFor="formatted-date-mask-input">Data</InputLabel>
+                                        <InputLabel htmlFor="formatted-date-mask-input">Data de Início</InputLabel>
                                         <Input
-                                            //name="datemask"
                                             id="formatted-date-mask-input"
                                             required
-                                            {...register('formatted-date-mask-input')}
+                                            {...register('start_date')}
+                                            inputComponent={DateMaskCustom as any}
+                                        />
+                                    </FormControl>
+                                </div>
+
+                                <div>
+                                    <FormControl sx={{ m: 1, width: '35ch' }} variant="standard">
+                                        <InputLabel htmlFor="formatted-date-mask-input">Data de Término</InputLabel>
+                                        <Input
+                                            id="formatted-date-mask-input"
+                                            required
+                                            {...register('end_date')}
                                             inputComponent={DateMaskCustom as any}
                                         />
                                     </FormControl>
@@ -245,7 +279,7 @@ const CreateParkContent: React.FC = () => {
                                         autoFocus
                                         error={titleError && titleError.length ? true : false}
                                         helperText={titleError}
-                                        {...register('input_local')}
+                                        {...register('locationRef')}
                                     />
                                 </div>
 
@@ -265,7 +299,7 @@ const CreateParkContent: React.FC = () => {
                             DICAS E BOAS PRÁTICAS</h1>
 
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'left', marginTop: '2vh' }}>
-                            <PhotoUploader setImage={undefined} image_view={''} />
+                            <PhotoUploader setImage={setImage} image_view={''} />
                             <h1 className='ml-2'>Selecionar foto</h1>
                         </div>
 
@@ -296,9 +330,15 @@ const CreateParkContent: React.FC = () => {
                                         required
                                         multiline
                                         rows={4}
-                                        placeholder="Conte um pouco sobre o evento..."
+                                        placeholder="Conte um pouco sobre a boa prática..."
                                         {...register('box_description')}
                                     />
+                                </div>
+
+                                <div className='mt-10' style={{ display: 'flex', gap: '10px', flex: 1, justifyContent: 'center', paddingBottom: '8vh' }}>
+                                    <ButtonGreen type='submit'>CONFIRMAR</ButtonGreen>
+
+                                    <ButtonCancel onClick={() => handleRedirect('/home')}>CANCELAR</ButtonCancel>
                                 </div>
                             </Box>
                         </div>

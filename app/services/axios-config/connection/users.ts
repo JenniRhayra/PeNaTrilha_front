@@ -1,5 +1,6 @@
 import { api } from "..";
 import { ICreateUser } from "./types/ICreateUser";
+import { User } from "./types/IListManyParksInfo";
 
 export class UsersService {
     async createUser(data: ICreateUser): Promise<any> {
@@ -12,6 +13,14 @@ export class UsersService {
         const response = await api.get(`/user/find-park-visit/${parkId}/${email}`);
 
         return response;
+    }
+
+    async getUserProfile(userId: number): Promise<User> {
+        return await api.get(`/user/get-user-profile/${userId}`);
+    }
+
+    async inativeUser(userId: number): Promise<void> {
+        return await api.put(`/user/inative-user/${userId}`);
     }
 
     async listParkVisit(userId: number): Promise<any> {

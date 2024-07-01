@@ -7,58 +7,39 @@ import FooterMenu from '../components/footerMenu';
 import ButtonBack from '../components/buttonBack';
 import HeaderControl from '../components/headerControl';
 import SearchComponent from '../components/searchComponent';
+import { guideService } from '../services/axios-config/connection';
+import Cookies from 'js-cookie';
+import { useQuery } from '../hooks/useQuery';
+import { Guide } from '../services/axios-config/connection/types/IListGuideByPark';
 
 const Home: React.FC = () => {
+  const id = Cookies.get('id');
 
-    const guides = [
-        {
-          photo: '/images/guia1.jpg',
-          name: 'Guia 1',
-          status: 'pendente' as 'pendente',
-          habilidades: ['Botânica', 'Observação de aves', 'Geologia'],
-          language: 'Português',
-          park: ['PE Intervales', 'PE Carlos Botelho', 'PETAR'],
-          link: 'guide/001',
-        },
-        {
-          photo: '/images/guia2.jpg',
-          name: 'Guia 2',
-          status: 'aprovado' as 'aprovado',
-          habilidades: ['Travessia', 'Observação de aves', 'Botânica'],
-          language: 'Inglês',
-          park: ['PE Intervales', 'PETAR'],
-          link: 'guide/002',
-        },
-        {
-          photo: '/images/guia1.jpg',
-          name: 'Guia 3',
-          status: 'reprovado' as 'reprovado',
-          habilidades: ['Botânica', 'Observação de aves', 'Geologia'],
-          language: 'Português',
-          park: ['PE Intervales'],
-          link: 'guide/003',
-        },
-        {
-          photo: '/images/guia2.jpg',
-          name: 'Guia 4',
-          status: 'desativado' as 'desativado',
-          habilidades: ['Travessia', 'Observação de aves', 'Botânica'],
-          language: 'Inglês',
-          park: ['PETAR'],
-          link: 'guide/004',
-        },
-      ];
+  const [getPark, , loadingPark, refetchPark] = useQuery(() => guideService.listGuideByPark(Number(id)), [id]);
+
+  const guides = (getPark || []).map((object: Guide, index: number) => ({
+    id: object?.id,
+    photo: object?.guideImage ?? '',
+    name: object?.user?.name ?? '',
+    status: object?.approvalStatus,
+    habilidades: (object?.specialties || []).map(sg => sg?.specialtyName).join(', '),
+    language: (object?.languages || []).map(sg => sg?.languageName).join(', '),
+    park: (object?.park || []).map(sg => sg?.park_name).join(', '),
+    link: (object?.park || []).map(sg => `/content_pages/${sg.id}/guide/${object?.id}`)?.[0],
+  }));
+
+  console.log('guides', guides)
 
   return (
-    <div style={{position:'absolute'}}>
-        <Header />
-        <ButtonBack top={'6vh'}/>
-        <SearchComponent title='GUIAS' />
-        <div>
-          <HeaderControl showDelete={true} />
-        </div>
-        <ProfileApprove profile={guides} />
-        <FooterMenu activePage="profile" />
+    <div style={{ position: 'absolute' }}>
+      <Header />
+      <ButtonBack top={'6vh'} />
+      <SearchComponent title='GUIAS' />
+      <div>
+        <HeaderControl showDelete={false} />
+      </div>
+      <ProfileApprove profile={guides} refetch={refetchPark} />
+      <FooterMenu activePage="profile" />
     </div>
   );
 };

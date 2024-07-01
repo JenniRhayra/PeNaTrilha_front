@@ -10,8 +10,16 @@ const Header: React.FC = () => {
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-    const profilePath = "/profile";
     const logoutPath = "/login";
+
+    const [getPath, setPath] = React.useState('')
+
+    const group = Cookies.get('group');
+
+    React.useEffect(() => {
+        const path = (group == '3' || group == 'GERENTE') ? 'parkManager_profile' : (group == '4' || group == 'GUIA') ? 'guide_profile' : 'guide_profile'
+        setPath(path)
+    }, [group])
 
     const handleRedirect = async (newPath: string) => {
         location.pathname = newPath;
@@ -26,7 +34,7 @@ const Header: React.FC = () => {
     };
 
     const handleProfileRedirect = () => {
-        handleRedirect(profilePath);
+        handleRedirect(getPath);
     };
 
     const handleLogoutRedirect = () => {

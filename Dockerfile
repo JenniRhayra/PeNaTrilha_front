@@ -4,15 +4,11 @@ FROM node:20
 # Create and change to the app directory
 WORKDIR /app
 
-# Copy application dependency manifests to the container image.
-# A wildcard is used to ensure both package.json AND package-lock.json are copied.
-COPY package*.json ./
+# Copy all files from PeNaTrilha_front to the container image.
+COPY ./PeNaTrilha_front/ .
 
 # Install production dependencies.
-RUN npm i -f
-
-# Copy local code to the container image.
-COPY . .
+RUN npm install
 
 # Build the Next.js application
 RUN npm run build
